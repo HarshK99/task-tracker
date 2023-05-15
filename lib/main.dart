@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
       ),
-      home: const MyHomePage(title: 'To-Do App'),
+      home: const TaskPage(title: 'New Tasks'),
     );
   }
 }
@@ -26,43 +26,57 @@ class Task {
   Task({required this.title, this.isCompleted = false});
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class TaskPage extends StatefulWidget {
+  const TaskPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<TaskPage> createState() => _TaskPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<Task> _tasks = [];
+class _TaskPageState extends State<TaskPage> {
+  List<Task> _newTasks = [];
+  List<Task> _dailyTasks = [];
   TextEditingController _textEditingController = TextEditingController();
 
-  void _addTask() {
+  void _addTask(List<Task> taskList) {
     setState(() {
       final newTask = _textEditingController.text;
       if (newTask.isNotEmpty) {
-        _tasks.add(Task(title: newTask));
+        taskList.add(Task(title: newTask));
         _textEditingController.clear();
       }
     });
   }
 
-  void _removeTask(int index) {
+  void _removeTask(List<Task> taskList, int index) {
     setState(() {
-      _tasks.removeAt(index);
+      taskList.removeAt(index);
     });
   }
 
-  void _toggleTaskCompletion(int index) {
+  void _toggleTaskCompletion(List<Task> taskList, int index) {
     setState(() {
-      _tasks[index].isCompleted = !_tasks[index].isCompleted;
+      taskList[index].isCompleted = !taskList[index].isCompleted;
+    });
+  }
+  int _currentIndex = 0;
+  final List<Widget> _pages = [
+    TaskPage(title: 'New Tasks'),
+    TaskPage(title: 'Daily Tasks'),
+  ];
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    List<Task> currentTasks = _currentIndex == 0 ? _newTasks : _dailyTasks;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -71,13 +85,13 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: _tasks.length,
+              itemCount: currentTasks.length,
               itemBuilder: (context, index) {
-                final task = _tasks[index];
+                final task = currentTasks[index];
                 return ListTile(
                   leading: Checkbox(
                     value: task.isCompleted,
-                    onChanged: (value) => _toggleTaskCompletion(index),
+                    onChanged: (value) => _toggleTaskCompletion(currentTasks, index),
                   ),
                   title: Text(
                     task.title,
@@ -89,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
-                    onPressed: () => _removeTask(index),
+                    onPressed: () => _removeTask(currentTasks, index),
                   ),
                 );
               },
@@ -107,10 +121,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.add),
-                  onPressed: _addTask,
+                  onPressed: () => _addTask(currentTasks),
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fiber_new),
+            label: 'New Tasks',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.today),
+            label: 'Daily Tasks',
           ),
         ],
       ),
