@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import '../model/task.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
+
+
 
 
 class TaskPage extends StatefulWidget {
@@ -12,31 +17,87 @@ class TaskPage extends StatefulWidget {
 }
 
 class _TaskPageState extends State<TaskPage> {
-  final List<Task> _newTasks = [];
-  final List<Task> _dailyTasks = [];
+  List<Task> _newTasks = [];
+  List<Task> _dailyTasks = [];
   final TextEditingController _textEditingController = TextEditingController();
 
-  void _addTask(List<Task> taskList) {
+
+  //
+  @override
+  void initState() {
+    super.initState();
+    loadTaskData();
+  }
+
+  Future<void> loadTaskData() async {
+    final newTasks = await loadTaskListFromPrefs('newTasks');
+    final dailyTasks = await loadTaskListFromPrefs('dailyTasks');
+
     setState(() {
-      final newTask = _textEditingController.text;
-      if (newTask.isNotEmpty) {
-        taskList.add(Task(title: newTask));
-        _textEditingController.clear();
-      }
+      _newTasks = newTasks;
+      _dailyTasks = dailyTasks;
     });
   }
 
-  void _removeTask(List<Task> taskList, int index) {
+
+
+
+  //
+
+  Future<void> _addTask(List<Task> taskList, String key) async {
+    final newTask = _textEditingController.text;
+    if (newTask.isNotEmpty) {
+      setState(() {
+        taskList.add(Task(title: newTask));
+        _textEditingController.clear();
+      });
+
+      // Save the updated task list to shared preferences
+      await saveTaskListToPrefs(taskList,key);
+    }
+  }
+
+  Future<void> _removeTask(List<Task> taskList, int index, String key) async {
     setState(() {
       taskList.removeAt(index);
     });
+
+    // Save the updated task list to shared preferences
+    await saveTaskListToPrefs(taskList,key);
   }
 
-  void _toggleTaskCompletion(List<Task> taskList, int index) {
+  Future<void>  _toggleTaskCompletion(List<Task> taskList, int index, String key) async {
     setState(() {
       taskList[index].isCompleted = !taskList[index].isCompleted;
     });
+    await saveTaskListToPrefs(taskList,key);
   }
+  //
+  Future<void> saveTaskListToPrefs(List<Task> taskList, String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final taskListJson = taskList.map((task) => task.toJson()).toList();
+    await prefs.setString(key, jsonEncode(taskListJson));
+  }
+
+
+
+  Future<List<Task>> loadTaskListFromPrefs(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final taskListJson = prefs.getString(key);
+    if (taskListJson != null) {
+      final taskListData = jsonDecode(taskListJson) as List<dynamic>;
+      return taskListData.map((taskData) => Task.fromJson(taskData)).toList();
+    } else {
+      return [];
+    }
+  }
+
+
+
+
+
+
+  //
   int _currentIndex = 0;
 
   void _onTabTapped(int index) {
@@ -50,6 +111,8 @@ class _TaskPageState extends State<TaskPage> {
   Widget build(BuildContext context) {
     List<Task> currentTasks = _currentIndex == 0 ? _newTasks : _dailyTasks;
     String pageTitle = _currentIndex == 0 ? 'New Tasks' : 'Daily Tasks';
+    String prefsKey =  _currentIndex == 0 ? 'newTasks' : 'dailyTasks';
+
 
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +128,7 @@ class _TaskPageState extends State<TaskPage> {
                 return ListTile(
                   leading: Checkbox(
                     value: task.isCompleted,
-                    onChanged: (value) => _toggleTaskCompletion(currentTasks, index),
+                    onChanged: (value) => _toggleTaskCompletion(currentTasks, index, prefsKey),
                   ),
                   title: Text(
                     task.title,
@@ -77,7 +140,7 @@ class _TaskPageState extends State<TaskPage> {
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
-                    onPressed: () => _removeTask(currentTasks, index),
+                    onPressed: () => _removeTask(currentTasks, index, prefsKey),
                   ),
                 );
               },
@@ -95,7 +158,7 @@ class _TaskPageState extends State<TaskPage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.add),
-                  onPressed: () => _addTask(currentTasks),
+                  onPressed: () => _addTask(currentTasks, prefsKey),
                 ),
               ],
             ),
