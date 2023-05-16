@@ -25,24 +25,36 @@ class TaskList extends StatelessWidget {
         itemCount: reversedTasks.length,
         itemBuilder: (context, index) {
           final task = reversedTasks[index];
-          return Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-            child: ListTile(
-              tileColor: task.isCompleted ? Colors.grey[200] : null,
-              leading: Checkbox(
-                value: task.isCompleted,
-                onChanged: (value) => toggleTaskCompletion(currentTasks, currentTasks.length - 1 - index, prefsKey),
+          return Dismissible(
+            key: Key(task.title),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 20),
+              child: const Icon(
+                Icons.delete,
+                color: Colors.white,
               ),
-              title: Text(
-                task.title,
-                style: TextStyle(
-                  decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+            ),
+            onDismissed: (direction) {
+              removeTask(currentTasks, currentTasks.length - 1 - index, prefsKey);
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              child: ListTile(
+                tileColor: task.isCompleted ? Colors.grey[200] : null,
+                leading: Checkbox(
+                  value: task.isCompleted,
+                  onChanged: (value) => toggleTaskCompletion(currentTasks, currentTasks.length - 1 - index, prefsKey),
                 ),
-              ),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () => removeTask(currentTasks, currentTasks.length - 1 - index, prefsKey),
+                title: Text(
+                  task.title,
+                  style: TextStyle(
+                    decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                  ),
+                ),
               ),
             ),
           );
