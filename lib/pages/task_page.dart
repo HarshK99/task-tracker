@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../model/task.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../ui/task_list.dart';
+import '../ui/task_input.dart';
 
 
 
@@ -38,9 +40,6 @@ class _TaskPageState extends State<TaskPage> {
       _dailyTasks = dailyTasks;
     });
   }
-
-
-
 
   //
 
@@ -92,11 +91,6 @@ class _TaskPageState extends State<TaskPage> {
     }
   }
 
-
-
-
-
-
   //
   int _currentIndex = 0;
 
@@ -119,62 +113,15 @@ class _TaskPageState extends State<TaskPage> {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: currentTasks.length,
-              itemBuilder: (context, index) {
-                final task = currentTasks[index];
-                return Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child: ListTile(
-                    tileColor: task.isCompleted ? Colors.grey[200] : null,
-                    leading: Checkbox(
-                      value: task.isCompleted,
-                      onChanged: (value) => _toggleTaskCompletion(currentTasks, index, prefsKey),
-                    ),
-                    title: Text(
-                      task.title,
-                      style: TextStyle(
-                        decoration: task.isCompleted
-                            ? TextDecoration.lineThrough
-                            : null,
-                      ),
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => _removeTask(currentTasks, index, prefsKey),
-                    ),
-                  ),
-                );
-              },
-            ),
+          TaskList(
+            currentTasks: currentTasks,
+            prefsKey: prefsKey,
+            toggleTaskCompletion: _toggleTaskCompletion,
+            removeTask: _removeTask,
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 40, // Adjust the value as per your preference
-                    child: TextField(
-                      controller: _textEditingController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        hintText: 'Enter Text',
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 10,vertical: 8)
-                      ),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () => _addTask(currentTasks, prefsKey),
-                ),
-              ],
-            ),
+          TaskInputField(
+            textEditingController: _textEditingController,
+            addTask: () => _addTask(currentTasks, prefsKey),
           ),
         ],
       ),
