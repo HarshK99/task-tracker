@@ -125,6 +125,7 @@ class _TaskPageState extends State<TaskPage> {
               itemBuilder: (context, index) {
                 final task = currentTasks[index];
                 return Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ListTile(
                     tileColor: task.isCompleted ? Colors.grey[200] : null,
@@ -154,11 +155,17 @@ class _TaskPageState extends State<TaskPage> {
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _textEditingController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter Text',
+                  child: SizedBox(
+                    height: 40, // Adjust the value as per your preference
+                    child: TextField(
+                      controller: _textEditingController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        hintText: 'Enter Text',
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10,vertical: 8)
+                      ),
                     ),
                   ),
                 ),
