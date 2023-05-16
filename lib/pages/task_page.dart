@@ -113,7 +113,6 @@ class _TaskPageState extends State<TaskPage> {
     String pageTitle = _currentIndex == 0 ? 'New Tasks' : 'Daily Tasks';
     String prefsKey =  _currentIndex == 0 ? 'newTasks' : 'dailyTasks';
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
@@ -125,22 +124,26 @@ class _TaskPageState extends State<TaskPage> {
               itemCount: currentTasks.length,
               itemBuilder: (context, index) {
                 final task = currentTasks[index];
-                return ListTile(
-                  leading: Checkbox(
-                    value: task.isCompleted,
-                    onChanged: (value) => _toggleTaskCompletion(currentTasks, index, prefsKey),
-                  ),
-                  title: Text(
-                    task.title,
-                    style: TextStyle(
-                      decoration: task.isCompleted
-                          ? TextDecoration.lineThrough
-                          : null,
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: ListTile(
+                    tileColor: task.isCompleted ? Colors.grey[200] : null,
+                    leading: Checkbox(
+                      value: task.isCompleted,
+                      onChanged: (value) => _toggleTaskCompletion(currentTasks, index, prefsKey),
                     ),
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => _removeTask(currentTasks, index, prefsKey),
+                    title: Text(
+                      task.title,
+                      style: TextStyle(
+                        decoration: task.isCompleted
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () => _removeTask(currentTasks, index, prefsKey),
+                    ),
                   ),
                 );
               },
@@ -153,11 +156,14 @@ class _TaskPageState extends State<TaskPage> {
                 Expanded(
                   child: TextField(
                     controller: _textEditingController,
-                    decoration: const InputDecoration(hintText: 'Enter task'),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter Text',
+                    ),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(Icons.send),
                   onPressed: () => _addTask(currentTasks, prefsKey),
                 ),
               ],
