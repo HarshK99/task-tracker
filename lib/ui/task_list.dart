@@ -17,11 +17,14 @@ class TaskList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reversedTasks = currentTasks.reversed.toList();
+
     return Expanded(
       child: ListView.builder(
-        itemCount: currentTasks.length,
+        reverse: true, // Reverse the order of the list
+        itemCount: reversedTasks.length,
         itemBuilder: (context, index) {
-          final task = currentTasks[index];
+          final task = reversedTasks[index];
           return Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -29,7 +32,7 @@ class TaskList extends StatelessWidget {
               tileColor: task.isCompleted ? Colors.grey[200] : null,
               leading: Checkbox(
                 value: task.isCompleted,
-                onChanged: (value) => toggleTaskCompletion(currentTasks, index, prefsKey),
+                onChanged: (value) => toggleTaskCompletion(currentTasks, currentTasks.length - 1 - index, prefsKey),
               ),
               title: Text(
                 task.title,
@@ -39,7 +42,7 @@ class TaskList extends StatelessWidget {
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.delete),
-                onPressed: () => removeTask(currentTasks, index, prefsKey),
+                onPressed: () => removeTask(currentTasks, currentTasks.length - 1 - index, prefsKey),
               ),
             ),
           );
@@ -48,4 +51,3 @@ class TaskList extends StatelessWidget {
     );
   }
 }
-
