@@ -21,7 +21,15 @@ class _TaskPageState extends State<TaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    String pageTitle = _currentIndex == 0 ? 'New Tasks' : 'Daily Tasks';
+    String pageTitle;
+    if (_currentIndex == 0) {
+      pageTitle = 'New Tasks';
+    } else if (_currentIndex == 1) {
+      pageTitle = "Today's Tasks";
+    } else {
+      pageTitle = 'Daily Tasks';
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
@@ -39,6 +47,10 @@ class _TaskPageState extends State<TaskPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.today),
+            label: "Today's Tasks",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
             label: 'Daily Tasks',
           ),
         ],

@@ -15,6 +15,7 @@ class TaskPageContent extends StatefulWidget {
 
 class _TaskPageContentState extends State<TaskPageContent> {
   List<Task> _newTasks = [];
+  List<Task> _todayTasks = [];
   List<Task> _dailyTasks = [];
   final TextEditingController _textEditingController = TextEditingController();
 
@@ -26,10 +27,12 @@ class _TaskPageContentState extends State<TaskPageContent> {
 
   Future<void> loadTaskData() async {
     final newTasks = await TaskDatabase.loadTaskListFromPrefs('newTasks');
+    final todayTasks = await TaskDatabase.loadTaskListFromPrefs('todayTasks');
     final dailyTasks = await TaskDatabase.loadTaskListFromPrefs('dailyTasks');
 
     setState(() {
       _newTasks = newTasks;
+      _todayTasks = todayTasks;
       _dailyTasks = dailyTasks;
     });
   }
@@ -64,8 +67,23 @@ class _TaskPageContentState extends State<TaskPageContent> {
 
   @override
   Widget build(BuildContext context) {
-    List<Task> currentTasks = widget.currentIndex == 0 ? _newTasks : _dailyTasks;
-    String prefsKey = widget.currentIndex == 0 ? 'newTasks' : 'dailyTasks';
+    List<Task> currentTasks;
+    String prefsKey;
+    String pageTitle;
+
+    if (widget.currentIndex == 0) {
+      currentTasks = _newTasks;
+      prefsKey = 'newTasks';
+      pageTitle = 'New Tasks';
+    } else if (widget.currentIndex == 1) {
+      currentTasks = _todayTasks;
+      prefsKey = 'todayTasks';
+      pageTitle = "Today's Tasks";
+    } else {
+      currentTasks = _dailyTasks;
+      prefsKey = 'dailyTasks';
+      pageTitle = 'Daily Tasks';
+    }
 
     return Column(
       children: [
