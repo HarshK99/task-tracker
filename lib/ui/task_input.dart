@@ -22,7 +22,7 @@ class TaskInputField extends StatelessWidget {
               height: 40,
               child: TextField(
                 controller: textEditingController,
-                textCapitalization: TextCapitalization.words,
+                textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
