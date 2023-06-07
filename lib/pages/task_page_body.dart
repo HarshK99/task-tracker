@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import '../model/task.dart';
 import '../ui/task_list.dart';
-import '../ui/task_input.dart';
+import '../ui/task_input_bar.dart';
 import '../ui/section_row.dart';
 import '../db/task_database.dart';
 
 class TaskPageContent extends StatefulWidget {
-  const TaskPageContent({Key? key, required this.currentIndex}) : super(key: key);
+  const TaskPageContent({Key? key, required this.currentIndex, required this.getPrefsKey}) : super(key: key);
 
   final int currentIndex;
+  final String Function() getPrefsKey;
 
   @override
   State<TaskPageContent> createState() => _TaskPageContentState();
 }
 
 class _TaskPageContentState extends State<TaskPageContent> {
-  List<Task> _newTasks = [];
-  List<Task> _todayTasks = [];
-  List<Task> _dailyTasks = [];
+  List<Task> _tasks = [];
   List<String> _sections = [];
   int _currentSectionIndex = 0;
   final TextEditingController _textEditingController = TextEditingController();
@@ -29,21 +28,16 @@ class _TaskPageContentState extends State<TaskPageContent> {
   }
 
   Future<void> loadTaskData() async {
-    final newTasks = await TaskDatabase.loadTaskListFromPrefs('newTasks');
-    final todayTasks = await TaskDatabase.loadTaskListFromPrefs('todayTasks');
-    final dailyTasks = await TaskDatabase.loadTaskListFromPrefs('dailyTasks');
+    final tasks = await TaskDatabase.loadTaskListFromPrefs(widget.getPrefsKey());
     final sections = await TaskDatabase.loadTaskSectionsFromPrefs();
 
-
     setState(() {
-      _newTasks = newTasks;
-      _todayTasks = todayTasks;
-      _dailyTasks = dailyTasks;
+      _tasks = tasks;
       _sections = sections;
     });
   }
 
-  Future<void> _addTask(List<Task> taskList, String key) async {
+  Future<void> _addTask(List<Task> taskList) async {
     final newTask = _textEditingController.text;
     if (newTask.isNotEmpty) {
       setState(() {
@@ -51,25 +45,24 @@ class _TaskPageContentState extends State<TaskPageContent> {
         _textEditingController.clear();
       });
 
-      await TaskDatabase.saveTaskListToPrefs(taskList, key);
+      await TaskDatabase.saveTaskListToPrefs(taskList, widget.getPrefsKey());
     }
   }
 
-  Future<void> _removeTask(List<Task> taskList, int index, String key) async {
+  Future<void> _removeTask(List<Task> taskList, int index) async {
     setState(() {
       taskList.removeAt(index);
     });
 
-    await TaskDatabase.saveTaskListToPrefs(taskList, key);
+    await TaskDatabase.saveTaskListToPrefs(taskList, widget.getPrefsKey());
   }
 
-  Future<void> _toggleTaskCompletion(List<Task> taskList, int index,
-      String key) async {
+  Future<void> _toggleTaskCompletion(List<Task> taskList, int index) async {
     setState(() {
       taskList[index].isCompleted = !taskList[index].isCompleted;
     });
 
-    await TaskDatabase.saveTaskListToPrefs(taskList, key);
+    await TaskDatabase.saveTaskListToPrefs(taskList, widget.getPrefsKey());
   }
 
   void _addSection(String sectionName) {
@@ -89,26 +82,9 @@ class _TaskPageContentState extends State<TaskPageContent> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
-    List<Task> currentTasks;
-    String prefsKey;
-    String pageTitle;
-
-    if (widget.currentIndex == 0) {
-      currentTasks = _newTasks;
-      prefsKey = 'newTasks';
-      pageTitle = 'New Tasks';
-    } else if (widget.currentIndex == 1) {
-      currentTasks = _todayTasks;
-      prefsKey = 'todayTasks';
-      pageTitle = "Today's Tasks";
-    } else {
-      currentTasks = _dailyTasks;
-      prefsKey = 'dailyTasks';
-      pageTitle = 'Daily Tasks';
-    }
+    List<Task> currentTasks = _tasks;
 
     return Column(
       children: <Widget>[
@@ -120,17 +96,15 @@ class _TaskPageContentState extends State<TaskPageContent> {
         ),
         TaskList(
           currentTasks: currentTasks,
-          prefsKey: '$prefsKey$_currentSectionIndex',
+          prefsKey: '${widget.getPrefsKey()}$_currentSectionIndex',
           toggleTaskCompletion: _toggleTaskCompletion,
           removeTask: _removeTask,
         ),
         TaskInputField(
           textEditingController: _textEditingController,
-          addTask: () =>
-              _addTask(currentTasks, '$prefsKey$_currentSectionIndex'),
+          addTask: () => _addTask(currentTasks),
         ),
       ],
     );
   }
 }
-

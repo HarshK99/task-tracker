@@ -18,3 +18,11 @@ class Task {
     );
   }
 }
+
+class TaskSection {
+  final String sectionName;
+  final List<Task> tasks;
+
+  TaskSection({required this.sectionName, required this.tasks});
+}
+

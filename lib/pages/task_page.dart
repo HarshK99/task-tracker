@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'task_page_content.dart';
+import 'task_page_body.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({Key? key, required this.title}) : super(key: key);
@@ -19,16 +19,32 @@ class _TaskPageState extends State<TaskPage> {
     });
   }
 
+  String getPrefsKey() {
+    String prefsKey;
+    String pageTitle;
+    switch (_currentIndex) {
+      case 0:
+        prefsKey = 'newTasks';
+        pageTitle = 'New Tasks';
+        break;
+      case 1:
+        prefsKey = 'todayTasks';
+        pageTitle = "Today's Tasks";
+        break;
+      case 2:
+        prefsKey = 'dailyTasks';
+        pageTitle = 'Daily Tasks';
+        break;
+      default:
+        prefsKey = '';
+        pageTitle = '';
+    }
+    return prefsKey;
+  }
+
   @override
   Widget build(BuildContext context) {
-    String pageTitle;
-    if (_currentIndex == 0) {
-      pageTitle = 'New Tasks';
-    } else if (_currentIndex == 1) {
-      pageTitle = "Today's Tasks";
-    } else {
-      pageTitle = 'Daily Tasks';
-    }
+    String pageTitle = getPrefsKey();
 
     return Scaffold(
       appBar: AppBar(
@@ -36,6 +52,7 @@ class _TaskPageState extends State<TaskPage> {
       ),
       body: TaskPageContent(
         currentIndex: _currentIndex,
+        getPrefsKey: getPrefsKey,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
