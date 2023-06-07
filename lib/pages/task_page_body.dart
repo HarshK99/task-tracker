@@ -28,8 +28,8 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   }
 
   Future<void> loadTaskData() async {
-    final tasks = await TaskDatabase.loadTaskListFromPrefs(widget.getPrefsKey());
-    final sections = await TaskDatabase.loadTaskSectionsFromPrefs();
+    final tasks = await TaskDatabase.instance.loadTasks();
+    final sections = await TaskDatabase.instance.loadSections();
 
     setState(() {
       _tasks = tasks;
@@ -40,29 +40,53 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   Future<void> _addTask(List<Task> taskList) async {
     final newTask = _textEditingController.text;
     if (newTask.isNotEmpty) {
+      final task = Task(
+        id: DateTime.now().microsecondsSinceEpoch,
+        title: newTask,
+        isCompleted: false,
+        dateTime: DateTime.now(),
+        description: '',
+        parentSection: '',
+        section: '',
+      );
+
+      await TaskDatabase.instance.insertTask(task);
+
       setState(() {
-        taskList.add(Task(title: newTask));
+        taskList.add(task);
         _textEditingController.clear();
       });
-
-      await TaskDatabase.saveTaskListToPrefs(taskList, widget.getPrefsKey());
     }
   }
 
   Future<void> _removeTask(List<Task> taskList, int index) async {
+    final task = taskList[index];
+    await TaskDatabase.instance.deleteTask(task);
+
     setState(() {
       taskList.removeAt(index);
     });
-
-    await TaskDatabase.saveTaskListToPrefs(taskList, widget.getPrefsKey());
   }
 
-  Future<void> _toggleTaskCompletion(List<Task> taskList, int index) async {
-    setState(() {
-      taskList[index].isCompleted = !taskList[index].isCompleted;
-    });
 
-    await TaskDatabase.saveTaskListToPrefs(taskList, widget.getPrefsKey());
+
+  Future<void> _toggleTaskCompletion(List<Task> taskList, int index) async {
+    final task = taskList[index];
+    final updatedTask = Task(
+      id: task.id,
+      title: task.title,
+      isCompleted: !task.isCompleted,
+      dateTime: task.dateTime,
+      description: task.description,
+      parentSection: task.parentSection,
+      section: task.section,
+    );
+
+    await TaskDatabase.instance.updateTask(updatedTask);
+
+    setState(() {
+      taskList[index] = updatedTask;
+    });
   }
 
   void _addSection(String sectionName) {
@@ -71,7 +95,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
         _sections.add(sectionName);
       });
 
-      TaskDatabase.saveTaskSectionsToPrefs(_sections);
+      TaskDatabase.instance.saveSections(_sections);
     }
   }
 
