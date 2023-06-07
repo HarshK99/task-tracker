@@ -5,17 +5,17 @@ import '../ui/task_input_field.dart';
 import '../ui/section_row.dart';
 import '../db/task_database.dart';
 
-class TaskPageContent extends StatefulWidget {
-  const TaskPageContent({Key? key, required this.currentIndex, required this.getPrefsKey}) : super(key: key);
+class TaskPageBody extends StatefulWidget {
+  const TaskPageBody({Key? key, required this.currentIndex, required this.getPrefsKey}) : super(key: key);
 
   final int currentIndex;
   final String Function() getPrefsKey;
 
   @override
-  State<TaskPageContent> createState() => _TaskPageContentState();
+  State<TaskPageBody> createState() => _TaskPageBodyState();
 }
 
-class _TaskPageContentState extends State<TaskPageContent> {
+class _TaskPageBodyState extends State<TaskPageBody> {
   List<Task> _tasks = [];
   List<String> _sections = [];
   int _currentSectionIndex = 0;

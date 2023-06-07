@@ -52,7 +52,7 @@ class _TaskPageState extends State<TaskPage> {
       appBar: AppBar(
         title: Text(pageTitle),
       ),
-      body: TaskPageContent(
+      body: TaskPageBody(
         currentIndex: _currentIndex,
         getPrefsKey: getPrefsKey,
       ),
