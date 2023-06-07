@@ -21,7 +21,6 @@ class _TaskPageState extends State<TaskPage> {
 
   String getPrefsKey() {
     String prefsKey;
-    String pageTitle;
     switch (_currentIndex) {
       case 0:
         prefsKey = 'newTasks';
@@ -34,7 +33,6 @@ class _TaskPageState extends State<TaskPage> {
         break;
       default:
         prefsKey = '';
-        pageTitle = '';
     }
     return prefsKey;
   }

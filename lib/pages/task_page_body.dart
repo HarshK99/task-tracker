@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../model/task.dart';
 import '../ui/task_list.dart';
-import '../ui/task_input_bar.dart';
+import '../ui/task_input_field.dart';
 import '../ui/section_row.dart';
 import '../db/task_database.dart';
 
