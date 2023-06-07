@@ -25,15 +25,12 @@ class _TaskPageState extends State<TaskPage> {
     switch (_currentIndex) {
       case 0:
         prefsKey = 'newTasks';
-        pageTitle = 'New Tasks';
         break;
       case 1:
         prefsKey = 'todayTasks';
-        pageTitle = "Today's Tasks";
         break;
       case 2:
         prefsKey = 'dailyTasks';
-        pageTitle = 'Daily Tasks';
         break;
       default:
         prefsKey = '';
@@ -44,7 +41,14 @@ class _TaskPageState extends State<TaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    String pageTitle = getPrefsKey();
+    String pageTitle;
+    if (_currentIndex == 0) {
+      pageTitle = 'New Tasks';
+    } else if (_currentIndex == 1) {
+      pageTitle = "Today's Tasks";
+    } else {
+      pageTitle = 'Daily Tasks';
+    }
 
     return Scaffold(
       appBar: AppBar(
