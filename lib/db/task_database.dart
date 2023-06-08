@@ -41,7 +41,8 @@ class TaskDatabase {
         await db.execute('''
           CREATE TABLE $sectionTable (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT
+            name TEXT,
+            parentSection TEXT
           )
         ''');
       },
@@ -87,19 +88,17 @@ class TaskDatabase {
     }
 
 
-  Future<void> saveSections(List<String> sections) async {
+  Future<void> insertSection(String parentSection, String sectionName) async {
     await _initDatabase();
-    await _database!.transaction((txn) async {
-      await txn.delete(sectionTable);
-      for (final section in sections) {
-        await txn.insert(sectionTable, {'name': section});
-      }
-    });
+    await _database!.insert(sectionTable, {'parentSection': parentSection, 'name': sectionName});
   }
 
-  Future<List<String>> loadSections() async {
+
+  Future<List<String>> loadSections(String parentSection) async {
     await _initDatabase();
-    final sectionsData = await _database!.query(sectionTable);
+    final sectionsData = await _database!.query(sectionTable,
+        where: 'parentSection = ?',
+        whereArgs: [parentSection]);
     return sectionsData.map((data) => data['name'] as String).toList();
   }
 

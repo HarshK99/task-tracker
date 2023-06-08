@@ -24,18 +24,26 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   @override
   void initState() {
     super.initState();
-    loadTaskData();
+    loadSections().then((_) {
+      loadTaskData();
+    });
+  }
+
+  Future<void> loadSections() async {
+    final parentSection = widget.getParentSection; // Get the parent section
+    final sections = await TaskDatabase.instance.loadSections(parentSection);
+    setState(() {
+      _sections = sections;
+    });
   }
 
   Future<void> loadTaskData() async {
     final parentSection = widget.getParentSection; // Get the parent section
     final section = _sections[_currentSectionIndex]; // Get the section
     final tasks = await TaskDatabase.instance.loadTasksBySections(parentSection, section);
-    final sections = await TaskDatabase.instance.loadSections();
 
     setState(() {
       _tasks = tasks;
-      _sections = sections;
     });
   }
 
@@ -99,7 +107,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
         _sections.add(sectionName);
       });
 
-      TaskDatabase.instance.saveSections(_sections);
+      TaskDatabase.instance.insertSection(widget.getParentSection, sectionName);
     }
   }
 
