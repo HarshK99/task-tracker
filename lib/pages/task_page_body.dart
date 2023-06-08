@@ -32,6 +32,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   Future<void> loadSections() async {
     final parentSection = widget.getParentSection; // Get the parent section
     final sections = await TaskDatabase.instance.loadSections(parentSection);
+    print("My Sections: $sections");
     setState(() {
       _sections = sections;
     });
@@ -80,8 +81,6 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   }
 
 
-
-
   Future<void> _toggleTaskCompletion(List<Task> taskList, int index) async {
     final task = taskList[index];
     final updatedTask = Task(
@@ -102,12 +101,13 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   }
 
   void _addSection(String sectionName) {
+    final parentSection = widget.getParentSection; // Get the parent section
     if (sectionName.isNotEmpty) {
       setState(() {
         _sections.add(sectionName);
       });
 
-      TaskDatabase.instance.insertSection(widget.getParentSection, sectionName);
+      TaskDatabase.instance.insertSection(parentSection, sectionName);
     }
   }
 

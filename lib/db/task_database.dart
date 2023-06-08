@@ -41,8 +41,9 @@ class TaskDatabase {
         await db.execute('''
           CREATE TABLE $sectionTable (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            parentSection TEXT
+            parentSection TEXT,
+            name TEXT
+            
           )
         ''');
       },
