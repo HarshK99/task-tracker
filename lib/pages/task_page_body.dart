@@ -6,10 +6,10 @@ import '../ui/section_row.dart';
 import '../db/task_database.dart';
 
 class TaskPageBody extends StatefulWidget {
-  const TaskPageBody({Key? key, required this.currentIndex, required this.getPrefsKey}) : super(key: key);
+  const TaskPageBody({Key? key, required this.currentParentIndex, required this.getParentSection}) : super(key: key);
 
-  final int currentIndex;
-  final String Function() getPrefsKey;
+  final int currentParentIndex;
+  final String getParentSection;
 
   @override
   State<TaskPageBody> createState() => _TaskPageBodyState();
@@ -28,7 +28,9 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   }
 
   Future<void> loadTaskData() async {
-    final tasks = await TaskDatabase.instance.loadTasks();
+    final parentSection = widget.getParentSection; // Get the parent section
+    final section = _sections[_currentSectionIndex]; // Get the section
+    final tasks = await TaskDatabase.instance.loadTasksBySections(parentSection, section);
     final sections = await TaskDatabase.instance.loadSections();
 
     setState(() {
@@ -36,6 +38,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
       _sections = sections;
     });
   }
+
 
   Future<void> _addTask(List<Task> taskList) async {
     final newTask = _textEditingController.text;
@@ -46,8 +49,8 @@ class _TaskPageBodyState extends State<TaskPageBody> {
         isCompleted: false,
         dateTime: DateTime.now(),
         description: '',
-        parentSection: '',
-        section: '',
+        parentSection: widget.getParentSection,
+        section: _sections[_currentSectionIndex],
       );
 
       await TaskDatabase.instance.insertTask(task);
@@ -59,7 +62,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
     }
   }
 
-  Future<void> _removeTask(List<Task> taskList, int index, String prefsKey) async {
+  Future<void> _removeTask(List<Task> taskList, int index) async {
     final task = taskList[index];
     await TaskDatabase.instance.deleteTask(task);
 
@@ -103,6 +106,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   void _switchSection(int index) {
     setState(() {
       _currentSectionIndex = index;
+      loadTaskData();
     });
   }
 
@@ -121,7 +125,6 @@ class _TaskPageBodyState extends State<TaskPageBody> {
         ),
         TaskList(
           currentTasks: currentTasks,
-          prefsKey: '${widget.getPrefsKey()}$_currentSectionIndex',
           toggleTaskCompletion: _toggleTaskCompletion,
           removeTask: _removeTask,
         ),

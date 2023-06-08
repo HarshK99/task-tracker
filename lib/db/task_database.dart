@@ -14,9 +14,7 @@ class TaskDatabase {
   TaskDatabase._(); // Private constructor to prevent instantiation
 
   static TaskDatabase get instance {
-    if (_instance == null) {
-      _instance = TaskDatabase._();
-    }
+    _instance ??= TaskDatabase._();
     return _instance!;
   }
 
@@ -78,11 +76,16 @@ class TaskDatabase {
     );
   }
 
-  Future<List<Task>> loadTasks() async {
-    await _initDatabase();
-    final tasksData = await _database!.query(taskTable);
-    return tasksData.map((data) => Task.fromMap(data)).toList();
-  }
+  Future<List<Task>> loadTasksBySections(String parentSection, String section) async {
+      await _initDatabase();
+      final List<Map<String, dynamic>> maps = await _database!.query(
+        taskTable,
+        where: 'parentSection = ? AND section = ?',
+        whereArgs: [parentSection, section],
+      );
+      return List.generate(maps.length, (index) => Task.fromMap(maps[index]));
+    }
+
 
   Future<void> saveSections(List<String> sections) async {
     await _initDatabase();

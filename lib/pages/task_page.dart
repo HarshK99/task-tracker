@@ -4,45 +4,44 @@ import 'task_page_body.dart';
 class TaskPage extends StatefulWidget {
   const TaskPage({Key? key, required this.title}) : super(key: key);
   final String title;
-  //final List<String> titles;
 
   @override
   State<TaskPage> createState() => _TaskPageState();
 }
 
 class _TaskPageState extends State<TaskPage> {
-  int _currentIndex = 0;
+  int _currentParentIndex = 0;
 
   void _onTabTapped(int index) {
     setState(() {
-      _currentIndex = index;
+      _currentParentIndex = index;
     });
   }
 
-  String getPrefsKey() {
-    String prefsKey;
-    switch (_currentIndex) {
+  String getParentSection() {
+    String parentSection;
+    switch (_currentParentIndex) {
       case 0:
-        prefsKey = 'newTasks';
+        parentSection = 'newTasks';
         break;
       case 1:
-        prefsKey = 'todayTasks';
+        parentSection = 'todayTasks';
         break;
       case 2:
-        prefsKey = 'dailyTasks';
+        parentSection = 'dailyTasks';
         break;
       default:
-        prefsKey = '';
+        parentSection = '';
     }
-    return prefsKey;
+    return parentSection;
   }
 
   @override
   Widget build(BuildContext context) {
     String pageTitle;
-    if (_currentIndex == 0) {
+    if (_currentParentIndex == 0) {
       pageTitle = 'New Tasks';
-    } else if (_currentIndex == 1) {
+    } else if (_currentParentIndex == 1) {
       pageTitle = "Today's Tasks";
     } else {
       pageTitle = 'Daily Tasks';
@@ -53,11 +52,11 @@ class _TaskPageState extends State<TaskPage> {
         title: Text(pageTitle),
       ),
       body: TaskPageBody(
-        currentIndex: _currentIndex,
-        getPrefsKey: getPrefsKey,
+        currentParentIndex: _currentParentIndex,
+        getParentSection: getParentSection(),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+        currentIndex: _currentParentIndex,
         onTap: _onTabTapped,
         items: const [
           BottomNavigationBarItem(
