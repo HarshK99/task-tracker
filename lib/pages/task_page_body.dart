@@ -59,7 +59,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
     }
   }
 
-  Future<void> _removeTask(List<Task> taskList, int index) async {
+  Future<void> _removeTask(List<Task> taskList, int index, String prefsKey) async {
     final task = taskList[index];
     await TaskDatabase.instance.deleteTask(task);
 
@@ -67,6 +67,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
       taskList.removeAt(index);
     });
   }
+
 
 
 
