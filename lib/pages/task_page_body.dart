@@ -54,7 +54,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   Future<void> loadTaskData() async {
     final parentSection = widget.getParentSection; // Get the parent section
     print("My PSections: $parentSection");
-    final section = _sections[_currentSectionIndex]; // Get the section
+    final section = _sections.isNotEmpty ? _sections[_currentSectionIndex] : ''; // Get the section
     final tasks = await TaskDatabase.instance.loadTasksBySections(parentSection, section);
 
     setState(() {
