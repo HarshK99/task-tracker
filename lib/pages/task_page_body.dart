@@ -11,6 +11,8 @@ class TaskPageBody extends StatefulWidget {
   final int currentParentIndex;
   final String getParentSection;
 
+
+
   @override
   State<TaskPageBody> createState() => _TaskPageBodyState();
 }
@@ -29,6 +31,17 @@ class _TaskPageBodyState extends State<TaskPageBody> {
     });
   }
 
+  @override
+  void didUpdateWidget(TaskPageBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.getParentSection != widget.getParentSection) {
+      _currentSectionIndex = 0;
+      loadSections().then((_) {
+        loadTaskData();
+      });
+    }
+  }
+
   Future<void> loadSections() async {
     final parentSection = widget.getParentSection; // Get the parent section
     final sections = await TaskDatabase.instance.loadSections(parentSection);
@@ -40,6 +53,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
 
   Future<void> loadTaskData() async {
     final parentSection = widget.getParentSection; // Get the parent section
+    print("My PSections: $parentSection");
     final section = _sections[_currentSectionIndex]; // Get the section
     final tasks = await TaskDatabase.instance.loadTasksBySections(parentSection, section);
 
@@ -103,13 +117,14 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   void _addSection(String sectionName) {
     final parentSection = widget.getParentSection; // Get the parent section
     if (sectionName.isNotEmpty) {
-      setState(() {
-        _sections.add(sectionName);
+      TaskDatabase.instance.insertSection(parentSection, sectionName).then((_) {
+        setState(() {
+          _sections.add(sectionName);
+        });
       });
-
-      TaskDatabase.instance.insertSection(parentSection, sectionName);
     }
   }
+
 
   void _switchSection(int index) {
     setState(() {

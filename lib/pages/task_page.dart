@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'task_page_body.dart';
 
 class TaskPage extends StatefulWidget {
-  const TaskPage({Key? key, required this.title}) : super(key: key);
-  final String title;
+  const TaskPage({Key? key}) : super(key: key);
 
   @override
   State<TaskPage> createState() => _TaskPageState();
