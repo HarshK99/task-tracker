@@ -7,11 +7,13 @@ class TaskList extends StatelessWidget {
     required this.currentTasks,
     required this.toggleTaskCompletion,
     required this.removeTask,
+    required this.viewTaskDetails, // New parameter for viewing task details
   }) : super(key: key);
 
   final List<Task> currentTasks;
   final Function toggleTaskCompletion;
   final Function removeTask;
+  final Function(Task) viewTaskDetails; // Callback for viewing task details
 
   @override
   Widget build(BuildContext context) {
@@ -38,19 +40,23 @@ class TaskList extends StatelessWidget {
             onDismissed: (direction) {
               removeTask(currentTasks, currentTasks.length - 1 - index);
             },
-            child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              child: ListTile(
-                tileColor: task.isCompleted ? Colors.grey[200] : null,
-                leading: Checkbox(
-                  value: task.isCompleted,
-                  onChanged: (value) => toggleTaskCompletion(currentTasks, currentTasks.length - 1 - index),
-                ),
-                title: Text(
-                  task.title,
-                  style: TextStyle(
-                    decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+            child: GestureDetector(
+              onTap: () => viewTaskDetails(task), // Navigate to task details page
+              child: Card(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                child: ListTile(
+                  tileColor: task.isCompleted ? Colors.grey[200] : null,
+                  leading: Checkbox(
+                    value: task.isCompleted,
+                    onChanged: (value) =>
+                        toggleTaskCompletion(currentTasks, currentTasks.length - 1 - index),
+                  ),
+                  title: Text(
+                    task.title,
+                    style: TextStyle(
+                      decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                    ),
                   ),
                 ),
               ),
