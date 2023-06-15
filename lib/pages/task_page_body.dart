@@ -4,7 +4,7 @@ import '../ui/task_list.dart';
 import '../ui/task_input_field.dart';
 import '../ui/section_row.dart';
 import '../db/task_database.dart';
-import 'task_details_page.dart';
+import 'task_child_page.dart';
 
 class TaskPageBody extends StatefulWidget {
   const TaskPageBody({Key? key, required this.currentParentIndex, required this.getParentSection}) : super(key: key);
@@ -134,11 +134,26 @@ class _TaskPageBodyState extends State<TaskPageBody> {
     });
   }
 
-  Future<void> _navigateToTaskDetails(BuildContext context, Task task) async {
+  Future<void> _navigateToTaskChild(BuildContext context, Task task) async {
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => TaskDetailsPage(task: task)),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return TaskChildPage(parentTask: task);
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+        transitionDuration: Duration(milliseconds: 300), // Adjust the duration as needed
+      ),
     );
   }
+
 
 
 
@@ -158,7 +173,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
           currentTasks: currentTasks,
           toggleTaskCompletion: _toggleTaskCompletion,
           removeTask: _removeTask,
-          viewTaskDetails: (task) => _navigateToTaskDetails(context, task)
+          viewTaskDetails: (task) => _navigateToTaskChild(context, task)
         ),
         TaskInputField(
           textEditingController: _textEditingController,

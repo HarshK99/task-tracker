@@ -34,7 +34,8 @@ class TaskDatabase {
             dateTime TEXT,
             description TEXT,
             parentSection TEXT,
-            section TEXT
+            section TEXT,
+            parentId INTEGER
           )
         ''');
 
@@ -84,6 +85,16 @@ class TaskDatabase {
         taskTable,
         where: 'parentSection = ? AND section = ?',
         whereArgs: [parentSection, section],
+      );
+      return List.generate(maps.length, (index) => Task.fromMap(maps[index]));
+    }
+
+  Future<List<Task>> loadChildTasks(int parentId) async {
+      await _initDatabase();
+      final List<Map<String, dynamic>> maps = await _database!.query(
+        taskTable,
+        where: 'parentId = ?',
+        whereArgs: [parentId],
       );
       return List.generate(maps.length, (index) => Task.fromMap(maps[index]));
     }

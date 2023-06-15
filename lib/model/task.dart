@@ -4,8 +4,9 @@ class Task {
   bool isCompleted;
   DateTime dateTime;
   String description;
-  String parentSection;
-  String section;
+  String? parentSection;
+  String? section;
+  int? parentId;
 
   Task({
     required this.id,
@@ -13,8 +14,9 @@ class Task {
     required this.isCompleted,
     required this.dateTime,
     required this.description,
-    required this.parentSection,
-    required this.section,
+    this.parentSection,
+    this.section,
+    this.parentId,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class Task {
       'description': description,
       'parentSection': parentSection,
       'section': section,
+      'parentId': parentId
     };
   }
 
@@ -36,8 +39,9 @@ class Task {
       isCompleted: map['isCompleted'] == 1,
       dateTime: DateTime.parse(map['dateTime'] as String),
       description: map['description'] as String,
-      parentSection: map['parentSection'] as String,
-      section: map['section'] as String,
+      parentSection: map['parentSection'] as String?,
+      section: map['section'] as String?,
+      parentId: map['parentId'] as int?
     );
   }
 }
