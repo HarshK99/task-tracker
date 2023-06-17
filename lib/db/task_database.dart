@@ -98,6 +98,15 @@ class TaskDatabase {
       );
       return List.generate(maps.length, (index) => Task.fromMap(maps[index]));
     }
+  Future<bool> hasChildTasks(int parentId) async {
+    final result = await _database!.query(
+      taskTable,
+      where: 'parentId = ?',
+      whereArgs: [parentId],
+    );
+
+    return result.isNotEmpty;
+  }
 
 
   Future<void> insertSection(String parentSection, String sectionName) async {
@@ -113,6 +122,8 @@ class TaskDatabase {
         whereArgs: [parentSection]);
     return sectionsData.map((data) => data['name'] as String).toList();
   }
+
+
 
   Future<void> closeDatabase() async {
     await _database?.close();

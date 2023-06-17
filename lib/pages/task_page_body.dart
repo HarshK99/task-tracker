@@ -6,13 +6,17 @@ import '../ui/section_row.dart';
 import '../db/task_database.dart';
 import 'task_child_page.dart';
 
+typedef ShowSnackBarCallback = void Function(String message);
+
 class TaskPageBody extends StatefulWidget {
-  const TaskPageBody({Key? key, required this.currentParentIndex, required this.getParentSection}) : super(key: key);
+  const TaskPageBody(
+      {Key? key,
+      required this.currentParentIndex,
+      required this.getParentSection})
+      : super(key: key);
 
   final int currentParentIndex;
   final String getParentSection;
-
-
 
   @override
   State<TaskPageBody> createState() => _TaskPageBodyState();
@@ -22,6 +26,8 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   List<Task> _tasks = [];
   List<String> _sections = [];
   int _currentSectionIndex = 0;
+  late final ShowSnackBarCallback showSnackBar;
+
   final TextEditingController _textEditingController = TextEditingController();
 
   @override
@@ -55,14 +61,16 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   Future<void> loadTaskData() async {
     final parentSection = widget.getParentSection; // Get the parent section
     // print("My PSections: $parentSection");
-    final section = _sections.isNotEmpty ? _sections[_currentSectionIndex] : ''; // Get the section
-    final tasks = await TaskDatabase.instance.loadTasksBySections(parentSection, section);
+    final section = _sections.isNotEmpty
+        ? _sections[_currentSectionIndex]
+        : ''; // Get the section
+    final tasks =
+        await TaskDatabase.instance.loadTasksBySections(parentSection, section);
 
     setState(() {
       _tasks = tasks;
     });
   }
-
 
   Future<void> _addTask(List<Task> taskList) async {
     final newTask = _textEditingController.text;
@@ -88,18 +96,29 @@ class _TaskPageBodyState extends State<TaskPageBody> {
 
   Future<void> _removeTask(List<Task> taskList, int index) async {
     final task = taskList[index];
-    if (task.parentSection == "todayTasks" && task.parentId != null) {
-      final updatedTask = task.copyWith(parentSection: null);
-      await TaskDatabase.instance.updateTask(updatedTask);
+    final hasChildTasks = await TaskDatabase.instance.hasChildTasks(task.id);
+
+    if (hasChildTasks) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Cannot remove task with child tasks'),
+          ),
+        );
+      }
     } else {
-      await TaskDatabase.instance.deleteTask(task);
+      if (task.parentSection == "todayTasks" && task.parentId != null) {
+        final updatedTask = task.copyWith(parentSection: null);
+        await TaskDatabase.instance.updateTask(updatedTask);
+      } else {
+        await TaskDatabase.instance.deleteTask(task);
+      }
+
+      setState(() {
+        taskList.removeAt(index);
+      });
     }
-
-    setState(() {
-      taskList.removeAt(index);
-    });
   }
-
 
   Future<void> _toggleTaskCompletion(List<Task> taskList, int index) async {
     final task = taskList[index];
@@ -131,7 +150,6 @@ class _TaskPageBodyState extends State<TaskPageBody> {
     }
   }
 
-
   void _switchSection(int index) {
     setState(() {
       _currentSectionIndex = index;
@@ -154,13 +172,11 @@ class _TaskPageBodyState extends State<TaskPageBody> {
             child: child,
           );
         },
-        transitionDuration: Duration(milliseconds: 300), // Adjust the duration as needed
+        transitionDuration:
+            Duration(milliseconds: 300), // Adjust the duration as needed
       ),
     );
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -175,11 +191,10 @@ class _TaskPageBodyState extends State<TaskPageBody> {
           switchSection: _switchSection,
         ),
         TaskList(
-          currentTasks: currentTasks,
-          toggleTaskCompletion: _toggleTaskCompletion,
-          removeTask: _removeTask,
-          viewTaskDetails: (task) => _navigateToTaskChild(context, task)
-        ),
+            currentTasks: currentTasks,
+            toggleTaskCompletion: _toggleTaskCompletion,
+            removeTask: _removeTask,
+            viewTaskDetails: (task) => _navigateToTaskChild(context, task)),
         TaskInputField(
           textEditingController: _textEditingController,
           addTask: () => _addTask(currentTasks),
