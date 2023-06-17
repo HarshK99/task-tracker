@@ -90,6 +90,19 @@ class _TaskChildPageState extends State<TaskChildPage> {
     });
   }
 
+  void _handleTaskLongPress(Task task) async{
+    final parentTask = widget.parentTask;
+
+    // Update the parentSection to 'Today'
+    final updatedTask = task.copyWith(parentSection: "todayTasks",section: parentTask.section);
+    print('Long pressed task: ${updatedTask.title},${updatedTask.parentSection},${updatedTask.section}');
+    await TaskDatabase.instance.updateTask(updatedTask);
+
+
+    setState(() {
+    });
+  }
+
   Future<void> _navigateToTaskDetails(BuildContext context, Task task) async {
     await Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => TaskDetailsPage(task: task)),
@@ -109,7 +122,8 @@ class _TaskChildPageState extends State<TaskChildPage> {
             currentTasks: _childTasks,
             toggleTaskCompletion: _toggleChildTaskCompletion,
             removeTask: _removeChildTask,
-            viewTaskDetails: (task) => _navigateToTaskDetails(context, task)
+            viewTaskDetails: (task) => _navigateToTaskDetails(context, task),
+            onTaskLongPress: _handleTaskLongPress,
           ),
           TaskInputField(
             textEditingController: _textEditingController,

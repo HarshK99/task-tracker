@@ -7,13 +7,15 @@ class TaskList extends StatelessWidget {
     required this.currentTasks,
     required this.toggleTaskCompletion,
     required this.removeTask,
-    required this.viewTaskDetails, // New parameter for viewing task details
+    required this.viewTaskDetails,
+    this.onTaskLongPress,
   }) : super(key: key);
 
   final List<Task> currentTasks;
   final Function toggleTaskCompletion;
   final Function removeTask;
-  final Function(Task) viewTaskDetails; // Callback for viewing task details
+  final Function(Task) viewTaskDetails;
+  final Function(Task)? onTaskLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class TaskList extends StatelessWidget {
 
     return Expanded(
       child: ListView.builder(
-        reverse: true, // Reverse the order of the list
+        reverse: true,
         itemCount: reversedTasks.length,
         itemBuilder: (context, index) {
           final task = reversedTasks[index];
@@ -40,8 +42,12 @@ class TaskList extends StatelessWidget {
             onDismissed: (direction) {
               removeTask(currentTasks, currentTasks.length - 1 - index);
             },
-            child: GestureDetector(
-              onTap: () => viewTaskDetails(task), // Navigate to task details page
+            child: InkWell(
+              onTap: () => viewTaskDetails(task),
+              onLongPress: () {
+                onTaskLongPress!(task);
+                _showMovedToTodaySnackBar(context, task);
+              },
               child: Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
@@ -65,5 +71,13 @@ class TaskList extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void _showMovedToTodaySnackBar(BuildContext context, Task task) {
+    final snackBar = SnackBar(
+      content: Text('Task Moved to Today: ${task.title}'),
+      duration: const Duration(seconds: 2),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

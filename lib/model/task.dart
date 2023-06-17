@@ -19,6 +19,28 @@ class Task {
     this.parentId,
   });
 
+  Task copyWith({
+    int? id,
+    String? title,
+    bool? isCompleted,
+    DateTime? dateTime,
+    String? description,
+    String? parentSection,
+    String? section,
+    int? parentId,
+  }) {
+    return Task(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      isCompleted: isCompleted ?? this.isCompleted,
+      dateTime: dateTime ?? this.dateTime,
+      description: description ?? this.description,
+      parentSection: parentSection ?? this.parentSection,
+      section: section ?? this.section,
+      parentId: parentId ?? this.parentId,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
