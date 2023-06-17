@@ -88,7 +88,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
 
   Future<void> _removeTask(List<Task> taskList, int index) async {
     final task = taskList[index];
-    if (task.parentSection == "Today's Task") {
+    if (task.parentSection == "todayTasks" && task.parentId != null) {
       final updatedTask = task.copyWith(parentSection: null);
       await TaskDatabase.instance.updateTask(updatedTask);
     } else {

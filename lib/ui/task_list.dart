@@ -29,7 +29,7 @@ class TaskList extends StatelessWidget {
           final task = reversedTasks[index];
           return Dismissible(
             key: Key(task.title),
-            direction: DismissDirection.endToStart,
+            direction: DismissDirection.startToEnd,
             background: Container(
               color: Colors.red,
               alignment: Alignment.centerRight,
@@ -76,7 +76,7 @@ class TaskList extends StatelessWidget {
   void _showMovedToTodaySnackBar(BuildContext context, Task task) {
     final snackBar = SnackBar(
       content: Text('Task Moved to Today: ${task.title}'),
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 300),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

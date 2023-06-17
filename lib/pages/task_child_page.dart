@@ -63,8 +63,8 @@ class _TaskChildPageState extends State<TaskChildPage> {
     }
   }
 
-  Future<void> _removeChildTask(int index) async {
-    final childTask = _childTasks[index];
+  Future<void> _removeChildTask(List<Task> taskList,int index) async {
+    final childTask = taskList[index];
     await TaskDatabase.instance.deleteTask(childTask);
 
     setState(() {
@@ -72,16 +72,9 @@ class _TaskChildPageState extends State<TaskChildPage> {
     });
   }
 
-  Future<void> _toggleChildTaskCompletion(int index) async {
-    final childTask = _childTasks[index];
-    final updatedChildTask = Task(
-      id: childTask.id,
-      title: childTask.title,
-      isCompleted: !childTask.isCompleted,
-      dateTime: childTask.dateTime,
-      description: childTask.description,
-      parentId: childTask.parentId,
-    );
+  Future<void> _toggleChildTaskCompletion(List<Task> taskList,int index) async {
+    final childTask = taskList[index];
+    final updatedChildTask = childTask.copyWith(isCompleted: !childTask.isCompleted);
 
     await TaskDatabase.instance.updateTask(updatedChildTask);
 
