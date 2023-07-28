@@ -47,31 +47,40 @@ class _TaskPageState extends State<TaskPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(pageTitle),
-      ),
-      body: TaskPageBody(
-        currentParentIndex: _currentParentIndex,
-        getParentSection: getParentSection(),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentParentIndex,
-        onTap: _onTabTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.fiber_new),
-            label: 'New Tasks',
+      body: SafeArea(
+      child:Column(
+        children: [
+          Container(
+            color: Theme.of(context).primaryColor,
+            child: BottomNavigationBar(
+              currentIndex: _currentParentIndex,
+              onTap: _onTabTapped,
+              type: BottomNavigationBarType.fixed,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.fiber_new),
+                  label: 'New Tasks',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.today),
+                  label: "Today's Tasks",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.calendar_today),
+                  label: 'Daily Tasks',
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.today),
-            label: "Today's Tasks",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Daily Tasks',
+          Expanded(
+            child: TaskPageBody(
+              currentParentIndex: _currentParentIndex,
+              getParentSection: getParentSection(),
+            ),
           ),
         ],
       ),
+      )
     );
   }
 }
