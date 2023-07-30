@@ -89,6 +89,15 @@ class TaskDatabase {
       return List.generate(maps.length, (index) => Task.fromMap(maps[index]));
     }
 
+  Future<List<Task>> loadAllTodayTasks(String parentSection) async {
+    await _initDatabase();
+    final List<Map<String, dynamic>> maps = await _database!.query(
+      taskTable,
+      where: 'parentSection = ?',
+      whereArgs: [parentSection],
+    );
+    return List.generate(maps.length, (index) => Task.fromMap(maps[index]));
+  }
   Future<List<Task>> loadChildTasks(int parentId) async {
       await _initDatabase();
       final List<Map<String, dynamic>> maps = await _database!.query(

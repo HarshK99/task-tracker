@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
         isCompleted: false,
         dateTime: DateTime.now(),
         description: '',
-        parentSection: 'New Tasks',
+        parentSection: 'newTasks',
         section: 'New',
       );
 
@@ -51,8 +51,8 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
-          // List of elements (Tasks, Calendar, and Summary)
-          Row(
+          Expanded(
+            child:Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildNavItem('Tasks', Icons.check_circle, 0),
@@ -60,8 +60,6 @@ class _HomePageState extends State<HomePage> {
               _buildNavItem('Summary', Icons.analytics, 2),
             ],
           ),
-          Expanded(
-            child: _buildSelectedPage(_selectedIndex),
           ),
           // Input bar at the bottom
           TaskInputField(

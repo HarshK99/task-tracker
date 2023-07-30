@@ -52,9 +52,19 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   Future<void> loadSections() async {
     final parentSection = widget.getParentSection; // Get the parent section
     final sections = await TaskDatabase.instance.loadSections(parentSection);
-    // print("My Sections: $sections");
+
+    // "All" subsection, add it at the first position
+    sections.insert(0, 'All');
+
     setState(() {
       _sections = sections;
+    });
+  }
+  Future<void> loadAllTodayTasks() async {
+    final parentSection = widget.getParentSection;
+    final tasks = await TaskDatabase.instance.loadAllTodayTasks(parentSection);
+    setState(() {
+      _tasks = tasks;
     });
   }
 
@@ -64,13 +74,21 @@ class _TaskPageBodyState extends State<TaskPageBody> {
     final section = _sections.isNotEmpty
         ? _sections[_currentSectionIndex]
         : ''; // Get the section
-    final tasks =
-        await TaskDatabase.instance.loadTasksBySections(parentSection, section);
-
+    // Load tasks based on the current subsection
+    if (parentSection == 'todayTasks' && section == 'All') {
+      await loadAllTodayTasks();
+    } else {
+      final tasks =
+      await TaskDatabase.instance.loadTasksBySections(parentSection, section);
+      setState(() {
+        _tasks = tasks;
+      });
     setState(() {
       _tasks = tasks;
     });
-  }
+  }}
+
+
 
   Future<void> _addTask(List<Task> taskList) async {
     final newTask = _textEditingController.text;
@@ -153,9 +171,14 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   void _switchSection(int index) {
     setState(() {
       _currentSectionIndex = index;
-      loadTaskData();
+      if (widget.getParentSection=='todayTasks' && _sections[_currentSectionIndex] == 'All') {
+        loadAllTodayTasks();
+      } else {
+        loadTaskData();
+      }
     });
   }
+
 
   Future<void> _navigateToTaskChild(BuildContext context, Task task) async {
     await Navigator.of(context).push(
