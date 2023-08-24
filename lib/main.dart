@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracker/utils/constants.dart';
-import 'pages/task_page.dart';
 import 'pages/splash_screen.dart';
 import 'pages/home_page.dart';
 
@@ -35,11 +34,6 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  // Future<void> _navigateToTaskPage(BuildContext context) async {
-  //   await Future.delayed(const Duration(seconds: 1));
-  //   Navigator.of(context).pushReplacement(
-  //     MaterialPageRoute(builder: (_) => TaskPage()),
-  //   );
   Future<void> _navigateToHomePage(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 1));
     Navigator.of(context).pushReplacement(
