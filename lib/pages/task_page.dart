@@ -11,16 +11,16 @@ class TaskPage extends StatelessWidget {
       initialIndex: 1,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Task Page'),
-          bottom: TabBar(
-            tabs: const [
+          title: const Text('Task Page'),
+          bottom: const TabBar(
+            tabs: [
               Tab(icon: Icon(Icons.fiber_new), text: 'New Tasks'),
               Tab(icon: Icon(Icons.today), text: "Today's Tasks"),
               Tab(icon: Icon(Icons.calendar_today), text: 'Daily Tasks'),
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             TaskPageBody(currentParentIndex: 0, getParentSection: 'newTasks'),
             TaskPageBody(currentParentIndex: 1,getParentSection: 'todayTasks'),
