@@ -50,8 +50,8 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   }
 
   Future<void> loadSections() async {
-    final parentSection = widget.getParentSection; // Get the parent section
-    final sections = await TaskDatabase.instance.loadSections(parentSection);
+    // final parentSection = widget.getParentSection; // Get the parent section
+    final sections = await TaskDatabase.instance.loadSections();
 
     // "All" subsection, add it at the first position
     sections.insert(0, 'All');
@@ -158,9 +158,8 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   }
 
   void _addSection(String sectionName) {
-    final parentSection = widget.getParentSection; // Get the parent section
     if (sectionName.isNotEmpty) {
-      TaskDatabase.instance.insertSection(parentSection, sectionName).then((_) {
+      TaskDatabase.instance.insertSection(sectionName).then((_) {
         setState(() {
           _sections.add(sectionName);
         });
@@ -171,7 +170,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   void _switchSection(int index) {
     setState(() {
       _currentSectionIndex = index;
-      if (widget.getParentSection=='todayTasks' && _sections[_currentSectionIndex] == 'All') {
+      if (_sections[_currentSectionIndex] == 'All') {
         loadAllTodayTasks();
       } else {
         loadTaskData();

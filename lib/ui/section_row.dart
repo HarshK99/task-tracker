@@ -6,7 +6,7 @@ class SectionRow extends StatelessWidget {
   final Function(String) addSection;
   final Function(int) switchSection;
 
-  const SectionRow({
+  const SectionRow({super.key, 
     required this.sections,
     required this.currentSectionIndex,
     required this.addSection,

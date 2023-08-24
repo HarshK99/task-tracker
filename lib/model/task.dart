@@ -7,6 +7,7 @@ class Task {
   String? parentSection;
   String? section;
   int? parentId;
+  int? projectId;
 
   Task({
     required this.id,
@@ -17,6 +18,7 @@ class Task {
     this.parentSection,
     this.section,
     this.parentId,
+    this.projectId
   });
 
   Task copyWith({
@@ -50,7 +52,8 @@ class Task {
       'description': description,
       'parentSection': parentSection,
       'section': section,
-      'parentId': parentId
+      'parentId': parentId,
+      'projectId': projectId,
     };
   }
 
@@ -63,7 +66,9 @@ class Task {
       description: map['description'] as String,
       parentSection: map['parentSection'] as String?,
       section: map['section'] as String?,
-      parentId: map['parentId'] as int?
+      parentId: map['parentId'] as int?,
+      projectId: map['projectId'] as int?
+
     );
   }
 }

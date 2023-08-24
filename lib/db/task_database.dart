@@ -118,18 +118,16 @@ class TaskDatabase {
   }
 
 
-  Future<void> insertSection(String parentSection, String sectionName) async {
+  Future<void> insertSection(String sectionName) async {
     await _initDatabase();
-    await _database!.insert(sectionTable, {'parentSection': parentSection, 'name': sectionName});
+    await _database!.insert(sectionTable, {'section': sectionName});
   }
 
 
-  Future<List<String>> loadSections(String parentSection) async {
+  Future<List<String>> loadSections() async {
     await _initDatabase();
-    final sectionsData = await _database!.query(sectionTable,
-        where: 'parentSection = ?',
-        whereArgs: [parentSection]);
-    return sectionsData.map((data) => data['name'] as String).toList();
+    final sectionsData = await _database!.query(sectionTable);
+    return sectionsData.map((data) => data['section'] as String).toList();
   }
 
 
