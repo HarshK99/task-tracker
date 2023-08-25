@@ -134,13 +134,13 @@ class IssueDatabase {
 
   Future<void> insertSection(String sectionName) async {
     await _initDatabase();
-    await _database!.insert(sectionTable, {'section': sectionName});
+    await _database!.insert(sectionTable, {'name': sectionName});
   }
 
   Future<List<String>> loadSections() async {
     await _initDatabase();
     final sectionsData = await _database!.query(sectionTable);
-    return sectionsData.map((data) => data['section'] as String).toList();
+    return sectionsData.map((data) => data['name'] as String).toList();
   }
 
 // Close Database Function
