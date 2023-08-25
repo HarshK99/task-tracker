@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'task_page_body.dart';
+import 'issue_page_body.dart';
 
-class TaskPage extends StatelessWidget {
-  const TaskPage({Key? key}) : super(key: key);
+class IssuePage extends StatelessWidget {
+  const IssuePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,9 @@ class TaskPage extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            TaskPageBody(currentParentIndex: 0, getParentSection: 'projects'),
-            TaskPageBody(currentParentIndex: 1,getParentSection: 'todayTasks'),
-            TaskPageBody(currentParentIndex: 2,getParentSection: 'dailyTasks'),
+            IssuePageBody(currentParentIndex: 0, getParentSection: 'projects'),
+            IssuePageBody(currentParentIndex: 1,getParentSection: 'todayTasks'),
+            IssuePageBody(currentParentIndex: 2,getParentSection: 'dailyTasks'),
           ],
         ),
       ),

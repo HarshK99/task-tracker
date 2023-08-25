@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
-import '../model/task.dart';
+import '../model/issue.dart';
 
-class TaskList extends StatelessWidget {
-  const TaskList({
+class IssueList extends StatelessWidget {
+  const IssueList({
     Key? key,
-    required this.currentTasks,
-    required this.toggleTaskCompletion,
-    required this.removeTask,
-    required this.viewTaskDetails,
-    this.onTaskLongPress,
+    required this.currentIssues,
+    required this.toggleIssueCompletion,
+    required this.removeIssue,
+    required this.viewIssueDetails,
+    this.onIssueLongPress,
   }) : super(key: key);
 
-  final List<Task> currentTasks;
-  final Function toggleTaskCompletion;
-  final Function removeTask;
-  final Function(Task) viewTaskDetails;
-  final Function(Task)? onTaskLongPress;
+  final List<Issue> currentIssues;
+  final Function toggleIssueCompletion;
+  final Function removeIssue;
+  final Function(Issue) viewIssueDetails;
+  final Function(Issue)? onIssueLongPress;
 
   @override
   Widget build(BuildContext context) {
-    final reversedTasks = currentTasks.reversed.toList();
+    final reversedIssues = currentIssues.reversed.toList();
 
     return Expanded(
       child: ListView.builder(
         reverse: true,
-        itemCount: reversedTasks.length,
+        itemCount: reversedIssues.length,
         itemBuilder: (context, index) {
-          final task = reversedTasks[index];
+          final issue = reversedIssues[index];
           return Dismissible(
-            key: Key(task.title),
+            key: Key(issue.title),
             direction: DismissDirection.startToEnd,
             background: Container(
               color: Colors.red,
@@ -40,28 +40,28 @@ class TaskList extends StatelessWidget {
               ),
             ),
             onDismissed: (direction) {
-              removeTask(currentTasks, currentTasks.length - 1 - index);
+              removeIssue(currentIssues, currentIssues.length - 1 - index);
             },
             child: InkWell(
-              onTap: () => viewTaskDetails(task),
+              onTap: () => viewIssueDetails(issue),
               onLongPress: () {
-                onTaskLongPress!(task);
-                _showMovedToTodaySnackBar(context, task);
+                onIssueLongPress!(issue);
+                _showMovedToTodaySnackBar(context, issue);
               },
               child: Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                 child: ListTile(
-                  tileColor: task.isCompleted ? Colors.grey[200] : null,
+                  tileColor: issue.isCompleted ? Colors.grey[200] : null,
                   leading: Checkbox(
-                    value: task.isCompleted,
+                    value: issue.isCompleted,
                     onChanged: (value) =>
-                        toggleTaskCompletion(currentTasks, currentTasks.length - 1 - index),
+                        toggleIssueCompletion(currentIssues, currentIssues.length - 1 - index),
                   ),
                   title: Text(
-                    task.title,
+                    issue.title,
                     style: TextStyle(
-                      decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                      decoration: issue.isCompleted ? TextDecoration.lineThrough : null,
                     ),
                   ),
                 ),
@@ -73,9 +73,9 @@ class TaskList extends StatelessWidget {
     );
   }
 
-  void _showMovedToTodaySnackBar(BuildContext context, Task task) {
+  void _showMovedToTodaySnackBar(BuildContext context, Issue issue) {
     final snackBar = SnackBar(
-      content: Text('Task Moved to Today: ${task.title}'),
+      content: Text('Issue Moved to Today: ${issue.title}'),
       duration: const Duration(milliseconds: 300),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);

@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import '../model/task.dart';
-import '../db/task_database.dart';
+import '../model/issue.dart';
+import '../db/issue_database.dart';
 
-class TaskDetailsPage extends StatefulWidget {
-  final Task task;
+class IssueDetailsPage extends StatefulWidget {
+  final Issue issue;
 
-  TaskDetailsPage({Key? key, required this.task}) : super(key: key);
+  IssueDetailsPage({Key? key, required this.issue}) : super(key: key);
 
   @override
-  _TaskDetailsPageState createState() => _TaskDetailsPageState();
+  _IssueDetailsPageState createState() => _IssueDetailsPageState();
 }
 
-class _TaskDetailsPageState extends State<TaskDetailsPage> {
+class _IssueDetailsPageState extends State<IssueDetailsPage> {
   bool _isEditing = false;
   late TextEditingController _descriptionController;
 
   @override
   void initState() {
     super.initState();
-    _descriptionController = TextEditingController(text: widget.task.description);
+    _descriptionController = TextEditingController(text: widget.issue.description);
   }
 
   @override
@@ -27,9 +27,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
     super.dispose();
   }
 
-  Future<void> updateTask(Task task) async {
-    await TaskDatabase.instance.updateTask(task);
-    // Perform any additional operations after updating the task in the database
+  Future<void> updateIssue(Issue issue) async {
+    await IssueDatabase.instance.updateIssue(issue);
+    // Perform any additional operations after updating the issue in the database
   }
 
   void _toggleEditing() {
@@ -44,9 +44,9 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
 
   void _saveDescription() async {
     final updatedDescription = _descriptionController.text;
-    widget.task.description = updatedDescription;
+    widget.issue.description = updatedDescription;
 
-    await updateTask(widget.task);
+    await updateIssue(widget.issue);
 
     // Clear the input field
     _descriptionController.clear();
@@ -56,7 +56,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Task Details'),
+        title: const Text('Issue Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -64,7 +64,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Title: ${widget.task.title}',
+              'Title: ${widget.issue.title}',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -82,7 +82,7 @@ class _TaskDetailsPageState extends State<TaskDetailsPage> {
                     ),
                   )
                       : Text(
-                    widget.task.description,
+                    widget.issue.description,
                     style: const TextStyle(fontSize: 16),
                   ),
                 ),

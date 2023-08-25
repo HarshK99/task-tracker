@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 
-class TaskInputField extends StatelessWidget {
-  const TaskInputField({
+class IssueInputField extends StatelessWidget {
+  const IssueInputField({
     Key? key,
     required this.textEditingController,
-    required this.addTask,
+    required this.addIssue,
   }) : super(key: key);
 
 
   final TextEditingController textEditingController;
-  final void Function() addTask;
+  final void Function() addIssue;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class TaskInputField extends StatelessWidget {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  hintText: 'Enter Task',
+                  hintText: 'Enter Issue',
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 ),
               ),
@@ -36,7 +36,7 @@ class TaskInputField extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.send),
-            onPressed: addTask,
+            onPressed: addIssue,
           ),
         ],
       ),

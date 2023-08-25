@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import '../model/task.dart';
-import '../ui/task_list.dart';
-import '../ui/task_input_field.dart';
+import '../model/issue.dart';
+import '../ui/issue_list.dart';
+import '../ui/issue_input_field.dart';
 import '../ui/section_row.dart';
-import '../db/task_database.dart';
-import 'task_child_page.dart';
+import '../db/issue_database.dart';
+import 'issue_child_page.dart';
 
 typedef ShowSnackBarCallback = void Function(String message);
 
-class TaskPageBody extends StatefulWidget {
-  const TaskPageBody(
+class IssuePageBody extends StatefulWidget {
+  const IssuePageBody(
       {Key? key,
       required this.currentParentIndex,
       required this.getParentSection})
@@ -19,11 +19,11 @@ class TaskPageBody extends StatefulWidget {
   final String getParentSection;
 
   @override
-  State<TaskPageBody> createState() => _TaskPageBodyState();
+  State<IssuePageBody> createState() => _IssuePageBodyState();
 }
 
-class _TaskPageBodyState extends State<TaskPageBody> {
-  List<Task> _tasks = [];
+class _IssuePageBodyState extends State<IssuePageBody> {
+  List<Issue> _issues = [];
   List<String> _sections = [];
   int _currentSectionIndex = 0;
   late final ShowSnackBarCallback showSnackBar;
@@ -34,24 +34,24 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   void initState() {
     super.initState();
     loadSections();
-      loadTaskData();
+      loadIssueData();
     }
   // }
 
   // @override
-  // void didUpdateWidget(TaskPageBody oldWidget) {
+  // void didUpdateWidget(IssuePageBody oldWidget) {
   //   super.didUpdateWidget(oldWidget);
   //   if (oldWidget.getParentSection != widget.getParentSection) {
   //     _currentSectionIndex = 0;
   //     // loadSections().then((_) {
-  //       loadTaskData();
+  //       loadIssueData();
   //     // });
   //   }
   // }
 
   Future<void> loadSections() async {
     // final parentSection = widget.getParentSection; // Get the parent section
-    final sections = await TaskDatabase.instance.loadSections();
+    final sections = await IssueDatabase.instance.loadSections();
 
     // "All" subsection, add it at the first position
     sections.insert(0, 'All');
@@ -60,103 +60,93 @@ class _TaskPageBodyState extends State<TaskPageBody> {
       _sections = sections;
     });
   }
-  Future<void> loadAllTodayTasks() async {
-    final parentSection = widget.getParentSection;
-    final tasks = await TaskDatabase.instance.loadAllTodayTasks(parentSection);
+  Future<void> loadAllIssues() async {
+    final issues = await IssueDatabase.instance.loadAllIssues();
     setState(() {
-      _tasks = tasks;
+      _issues = issues;
     });
   }
 
-  Future<void> loadTaskData() async {
-    final parentSection = widget.getParentSection; // Get the parent section
-    // print("My PSections: $parentSection");
+  Future<void> loadIssueData() async {
     final section = _sections.isNotEmpty
         ? _sections[_currentSectionIndex]
         : ''; // Get the section
-    // Load tasks based on the current subsection
-    if (parentSection == 'todayTasks' && section == 'All') {
-      await loadAllTodayTasks();
+    // Load issues based on the current subsection
+    if (section == 'All') {
+      await loadAllIssues();
     } else {
-      final tasks =
-      await TaskDatabase.instance.loadTasksBySections(parentSection, section);
+      final issues =
+      await IssueDatabase.instance.loadIssuesBySections(section);
       setState(() {
-        _tasks = tasks;
+        _issues = issues;
       });
   }}
 
 
 
-  Future<void> _addTask(List<Task> taskList) async {
-    final newTask = _textEditingController.text;
-    if (newTask.isNotEmpty) {
-      final task = Task(
+  Future<void> _addIssue(List<Issue> issueList) async {
+    final newIssue = _textEditingController.text;
+    if (newIssue.isNotEmpty) {
+      final issue = Issue(
         id: DateTime.now().microsecondsSinceEpoch,
-        title: newTask,
+        title: newIssue,
         isCompleted: false,
         dateTime: DateTime.now(),
         description: '',
-        parentSection: widget.getParentSection,
         section: _sections[_currentSectionIndex],
       );
 
-      await TaskDatabase.instance.insertTask(task);
+      await IssueDatabase.instance.insertIssue(issue);
 
       setState(() {
-        taskList.add(task);
+        issueList.add(issue);
         _textEditingController.clear();
       });
     }
   }
 
-  Future<void> _removeTask(List<Task> taskList, int index) async {
-    final task = taskList[index];
-    final hasChildTasks = await TaskDatabase.instance.hasChildTasks(task.id);
+  Future<void> _removeIssue(List<Issue> issueList, int index) async {
+    final issue = issueList[index];
+    final hasChildIssues = await IssueDatabase.instance.hasChildIssues(issue.id);
 
-    if (hasChildTasks) {
+    if (hasChildIssues) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Cannot remove task with child tasks'),
+            content: Text('Cannot remove issue with child issues'),
           ),
         );
       }
     } else {
-      if (task.parentSection == "todayTasks" && task.parentId != null) {
-        final updatedTask = task.copyWith(parentSection: null);
-        await TaskDatabase.instance.updateTask(updatedTask);
-      } else {
-        await TaskDatabase.instance.deleteTask(task);
+        await IssueDatabase.instance.deleteIssue(issue);
       }
 
       setState(() {
-        taskList.removeAt(index);
+        issueList.removeAt(index);
       });
-    }
   }
 
-  Future<void> _toggleTaskCompletion(List<Task> taskList, int index) async {
-    final task = taskList[index];
-    final updatedTask = Task(
-      id: task.id,
-      title: task.title,
-      isCompleted: !task.isCompleted,
-      dateTime: task.dateTime,
-      description: task.description,
-      parentSection: task.parentSection,
-      section: task.section,
+  Future<void> _toggleIssueCompletion(List<Issue> issueList, int index) async {
+    final issue = issueList[index];
+    final updatedIssue = Issue(
+      id: issue.id,
+      title: issue.title,
+      isCompleted: !issue.isCompleted,
+      dateTime: issue.dateTime,
+      description: issue.description,
+      section: issue.section,
     );
 
-    await TaskDatabase.instance.updateTask(updatedTask);
+    await IssueDatabase.instance.updateIssue(updatedIssue);
 
     setState(() {
-      taskList[index] = updatedTask;
+      issueList[index] = updatedIssue;
     });
   }
 
   void _addSection(String sectionName) {
     if (sectionName.isNotEmpty) {
-      TaskDatabase.instance.insertSection(sectionName).then((_) {
+      IssueDatabase.instance.insertSection(sectionName).then((_) {
         setState(() {
           _sections.add(sectionName);
         });
@@ -168,19 +158,19 @@ class _TaskPageBodyState extends State<TaskPageBody> {
     setState(() {
       _currentSectionIndex = index;
       if (_sections[_currentSectionIndex] == 'All') {
-        loadAllTodayTasks();
+        loadAllIssues();
       } else {
-        loadTaskData();
+        loadIssueData();
       }
     });
   }
 
 
-  Future<void> _navigateToTaskChild(BuildContext context, Task task) async {
+  Future<void> _navigateToIssueChild(BuildContext context, Issue issue) async {
     await Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) {
-          return TaskChildPage(parentTask: task);
+          return IssueChildPage(parentIssue: issue);
         },
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
@@ -199,7 +189,7 @@ class _TaskPageBodyState extends State<TaskPageBody> {
 
   @override
   Widget build(BuildContext context) {
-    List<Task> currentTasks = _tasks;
+    List<Issue> currentIssues = _issues;
 
     return Column(
       children: <Widget>[
@@ -209,14 +199,14 @@ class _TaskPageBodyState extends State<TaskPageBody> {
           addSection: _addSection,
           switchSection: _switchSection,
         ),
-        TaskList(
-            currentTasks: currentTasks,
-            toggleTaskCompletion: _toggleTaskCompletion,
-            removeTask: _removeTask,
-            viewTaskDetails: (task) => _navigateToTaskChild(context, task)),
-        TaskInputField(
+        IssueList(
+            currentIssues: currentIssues,
+            toggleIssueCompletion: _toggleIssueCompletion,
+            removeIssue: _removeIssue,
+            viewIssueDetails: (issue) => _navigateToIssueChild(context, issue)),
+        IssueInputField(
           textEditingController: _textEditingController,
-          addTask: () => _addTask(currentTasks),
+          addIssue: () => _addIssue(currentIssues),
         ),
       ],
     );
