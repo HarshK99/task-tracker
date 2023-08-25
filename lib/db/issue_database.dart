@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart' as sql;
 import '../model/issue.dart';
 
 class IssueDatabase {
-  static const String dbName = 'Issue_database.db';
+  static const String dbName = 'issue_database.db';
   static const String issueTable = 'issues';
   static const String sectionTable = 'sections';
   static const String issueTypeTable = 'issue_types';
@@ -36,11 +36,11 @@ class IssueDatabase {
             isCompleted INTEGER,
             dateTime TEXT,
             description TEXT,
-            issueType TEXT, // Add issueType field
+            issueType TEXT,
             section TEXT,
-            projectId INTEGER, // Add projectId field
-            storyPoint INTEGER, // Add storyPoint field
-            parentId INTEGER // Add parentId field
+            projectId INTEGER,
+            storyPoint INTEGER,
+            parentId INTEGER
           )
         ''');
 
@@ -58,9 +58,9 @@ class IssueDatabase {
       )
     ''');
 
-    // Insert custom issue types with specified IDs
-      await db.insert(issueTypeTable, {'id': 1, 'pname': 'Project'});
-      await db.insert(issueTypeTable, {'id': 2, 'pname': 'Task'});
+        // Insert custom issue types with specified IDs
+        await db.insert(issueTypeTable, {'id': 1, 'pname': 'Project'});
+        await db.insert(issueTypeTable, {'id': 2, 'pname': 'Task'});
       },
     );
   }
@@ -94,21 +94,19 @@ class IssueDatabase {
     );
   }
 
-  Future<List<Issue>> loadIssuesBySections(
-      String section) async {
+  Future<List<Issue>> loadIssuesBySections(String section) async {
     await _initDatabase();
     final List<Map<String, dynamic>> maps = await _database!.query(
       issueTable,
-      where: 'AND section = ?',
-      whereArgs: [ section],
+      where: 'section = ?',
+      whereArgs: [section],
     );
     return List.generate(maps.length, (index) => Issue.fromMap(maps[index]));
   }
 
   Future<List<Issue>> loadAllIssues() async {
     await _initDatabase();
-    final List<Map<String, dynamic>> maps = await _database!.query(
-      issueTable);
+    final List<Map<String, dynamic>> maps = await _database!.query(issueTable);
     return List.generate(maps.length, (index) => Issue.fromMap(maps[index]));
   }
 
