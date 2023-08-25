@@ -36,7 +36,7 @@ class IssueDatabase {
             isCompleted INTEGER,
             dateTime TEXT,
             description TEXT,
-            issueType TEXT,
+            issueType INTEGER,
             section TEXT,
             projectId INTEGER,
             storyPoint INTEGER,
@@ -94,19 +94,21 @@ class IssueDatabase {
     );
   }
 
-  Future<List<Issue>> loadIssuesBySections(String section) async {
+  Future<List<Issue>> loadIssuesBySections(int issueType, String section) async {
     await _initDatabase();
     final List<Map<String, dynamic>> maps = await _database!.query(
       issueTable,
-      where: 'section = ?',
-      whereArgs: [section],
+      where: 'issueType = ? AND section = ?',
+      whereArgs: [issueType,section],
     );
     return List.generate(maps.length, (index) => Issue.fromMap(maps[index]));
   }
 
-  Future<List<Issue>> loadAllIssues() async {
+  Future<List<Issue>> loadAllIssues(int issueType) async {
     await _initDatabase();
-    final List<Map<String, dynamic>> maps = await _database!.query(issueTable);
+    final List<Map<String, dynamic>> maps = await _database!.query(issueTable,
+    where: 'issueType = ?',
+    whereArgs: [issueType]);
     return List.generate(maps.length, (index) => Issue.fromMap(maps[index]));
   }
 

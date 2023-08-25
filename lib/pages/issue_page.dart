@@ -22,9 +22,9 @@ class IssuePage extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            IssuePageBody(currentParentIndex: 0, getParentSection: 'projects'),
-            IssuePageBody(currentParentIndex: 1,getParentSection: 'todayTasks'),
-            IssuePageBody(currentParentIndex: 2,getParentSection: 'dailyTasks'),
+            IssuePageBody(currentParentIndex: 0, currentIssueType: 1),
+            IssuePageBody(currentParentIndex: 1,currentIssueType: 2),
+            IssuePageBody(currentParentIndex: 2,currentIssueType: 2),
           ],
         ),
       ),

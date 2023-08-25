@@ -12,11 +12,11 @@ class IssuePageBody extends StatefulWidget {
   const IssuePageBody(
       {Key? key,
       required this.currentParentIndex,
-      required this.getParentSection})
+      required this.currentIssueType})
       : super(key: key);
 
   final int currentParentIndex;
-  final String getParentSection;
+  final int currentIssueType;
 
   @override
   State<IssuePageBody> createState() => _IssuePageBodyState();
@@ -50,7 +50,6 @@ class _IssuePageBodyState extends State<IssuePageBody> {
   // }
 
   Future<void> loadSections() async {
-    // final parentSection = widget.getParentSection; // Get the parent section
     final sections = await IssueDatabase.instance.loadSections();
 
     // "All" subsection, add it at the first position
@@ -60,23 +59,21 @@ class _IssuePageBodyState extends State<IssuePageBody> {
       _sections = sections;
     });
   }
-  Future<void> loadAllIssues() async {
-    final issues = await IssueDatabase.instance.loadAllIssues();
-    setState(() {
-      _issues = issues;
-    });
-  }
 
   Future<void> loadIssueData() async {
+    final issueType = widget.currentIssueType;
     final section = _sections.isNotEmpty
         ? _sections[_currentSectionIndex]
         : ''; // Get the section
     // Load issues based on the current subsection
     if (section == 'All') {
-      await loadAllIssues();
+      final issues = await IssueDatabase.instance.loadAllIssues(issueType);
+    setState(() {
+      _issues = issues;
+    });
     } else {
       final issues =
-      await IssueDatabase.instance.loadIssuesBySections(section);
+      await IssueDatabase.instance.loadIssuesBySections(issueType, section);
       setState(() {
         _issues = issues;
       });
@@ -85,11 +82,13 @@ class _IssuePageBodyState extends State<IssuePageBody> {
 
 
   Future<void> _addIssue(List<Issue> issueList) async {
+    final issueType = widget.currentIssueType;
     final newIssue = _textEditingController.text;
     if (newIssue.isNotEmpty) {
       final issue = Issue(
         id: DateTime.now().microsecondsSinceEpoch,
         title: newIssue,
+        issueType: issueType,
         isCompleted: false,
         dateTime: DateTime.now(),
         description: '',
@@ -131,6 +130,7 @@ class _IssuePageBodyState extends State<IssuePageBody> {
     final updatedIssue = Issue(
       id: issue.id,
       title: issue.title,
+      issueType: issue.issueType,
       isCompleted: !issue.isCompleted,
       dateTime: issue.dateTime,
       description: issue.description,
@@ -157,11 +157,7 @@ class _IssuePageBodyState extends State<IssuePageBody> {
   void _switchSection(int index) {
     setState(() {
       _currentSectionIndex = index;
-      if (_sections[_currentSectionIndex] == 'All') {
-        loadAllIssues();
-      } else {
         loadIssueData();
-      }
     });
   }
 

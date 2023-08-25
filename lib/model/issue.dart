@@ -3,7 +3,7 @@ class Issue {
   String title;
   String description;
   bool isCompleted;
-  String? issueType;
+  int? issueType;
   String? section;
   int? projectId;
   int? storyPoint;
@@ -26,7 +26,7 @@ class Issue {
     String? title,
     String? description,
     bool? isCompleted,
-    String? issueType,
+    int? issueType,
     String? section,
     int? projectId,
     int? storyPoint,
@@ -65,7 +65,7 @@ class Issue {
       title: map['title'] as String,
       description: map['description'] as String,
       isCompleted: map['isCompleted'] == 1,
-      issueType: map['issueType'] as String?,
+      issueType: map['issueType'] as int?,
       section: map['section'] as String?,
       projectId: map['projectId'] as int?,
       storyPoint: map['storyPoint'] as int?,
