@@ -33,21 +33,21 @@ class _TaskPageBodyState extends State<TaskPageBody> {
   @override
   void initState() {
     super.initState();
-    loadSections().then((_) {
+    loadSections();
       loadTaskData();
-    });
-  }
-
-  @override
-  void didUpdateWidget(TaskPageBody oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.getParentSection != widget.getParentSection) {
-      _currentSectionIndex = 0;
-      loadSections().then((_) {
-        loadTaskData();
-      });
     }
-  }
+  // }
+
+  // @override
+  // void didUpdateWidget(TaskPageBody oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   if (oldWidget.getParentSection != widget.getParentSection) {
+  //     _currentSectionIndex = 0;
+  //     // loadSections().then((_) {
+  //       loadTaskData();
+  //     // });
+  //   }
+  // }
 
   Future<void> loadSections() async {
     // final parentSection = widget.getParentSection; // Get the parent section
@@ -83,9 +83,6 @@ class _TaskPageBodyState extends State<TaskPageBody> {
       setState(() {
         _tasks = tasks;
       });
-    setState(() {
-      _tasks = tasks;
-    });
   }}
 
 
