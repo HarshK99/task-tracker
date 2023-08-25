@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 
-class IssueInputField extends StatelessWidget {
+class IssueInputField extends StatefulWidget {
   const IssueInputField({
     Key? key,
     required this.textEditingController,
@@ -11,6 +11,13 @@ class IssueInputField extends StatelessWidget {
 
   final TextEditingController textEditingController;
   final void Function() addIssue;
+
+  @override
+  _IssueInputFieldState createState() => _IssueInputFieldState();
+}
+
+class _IssueInputFieldState extends State<IssueInputField> {
+  bool _isAdditionalFieldsVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +31,7 @@ class IssueInputField extends StatelessWidget {
                 child: SizedBox(
                   height: 40,
                   child: TextField(
-                    controller: textEditingController,
+                    controller: widget.textEditingController,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -33,21 +40,28 @@ class IssueInputField extends StatelessWidget {
                       hintText: 'Enter Issue',
                       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     ),
+                    onTap: () {
+                      setState(() {
+                        _isAdditionalFieldsVisible = !_isAdditionalFieldsVisible;
+                      });
+                    },
                   ),
                 ),
               ),
               IconButton(
                 icon: const Icon(Icons.send),
-                onPressed: addIssue,
+                onPressed: widget.addIssue,
               ),
             ],
           ),
         ),
-        AdditionalFields(), 
+        if (_isAdditionalFieldsVisible)
+          AdditionalFields(),
       ],
     );
   }
 }
+
 
 class AdditionalFields extends StatelessWidget {
   const AdditionalFields({
