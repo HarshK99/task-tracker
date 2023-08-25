@@ -7,6 +7,7 @@ class Issue {
   String? section;
   int? projectId;
   int? storyPoint;
+  String? priority;
   DateTime dateTime;
 
   Issue({
@@ -18,6 +19,7 @@ class Issue {
     this.section,
     this.projectId,
     this.storyPoint,
+    this.priority,
     required this.dateTime,
   });
 
@@ -30,6 +32,7 @@ class Issue {
     String? section,
     int? projectId,
     int? storyPoint,
+    String? priority,
     DateTime? dateTime,
   }) {
     return Issue(
@@ -41,6 +44,7 @@ class Issue {
       section: section ?? this.section,
       projectId: projectId ?? this.projectId,
       storyPoint: storyPoint ?? this.storyPoint,
+      priority: priority ?? this.priority,
       dateTime: dateTime ?? this.dateTime,
     );
   }
@@ -55,6 +59,7 @@ class Issue {
       'section': section,
       'projectId': projectId,
       'storyPoint': storyPoint,
+      'priority': priority,
       'dateTime': dateTime.toIso8601String(),
     };
   }
@@ -69,6 +74,7 @@ class Issue {
       section: map['section'] as String?,
       projectId: map['projectId'] as int?,
       storyPoint: map['storyPoint'] as int?,
+      priority: map['priority'] as String?,
       dateTime: DateTime.parse(map['dateTime'] as String),
     );
   }

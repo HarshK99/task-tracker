@@ -27,7 +27,7 @@ class IssueDatabase {
 
     _database = await sql.openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE $issueTable (
@@ -40,6 +40,7 @@ class IssueDatabase {
             section TEXT,
             projectId INTEGER,
             storyPoint INTEGER,
+            priority TEXT,
             parentId INTEGER
           )
         ''');
@@ -62,6 +63,12 @@ class IssueDatabase {
         await db.insert(issueTypeTable, {'id': 1, 'pname': 'Project'});
         await db.insert(issueTypeTable, {'id': 2, 'pname': 'Task'});
       },
+      onUpgrade: (db, oldVersion, newVersion) async {
+    if (oldVersion < 2) {
+      // Perform updates for version 2
+      await db.execute('ALTER TABLE $issueTable ADD COLUMN priority TEXT');
+    }
+  },
     );
   }
 

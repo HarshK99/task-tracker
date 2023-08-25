@@ -29,6 +29,9 @@ class _IssuePageBodyState extends State<IssuePageBody> {
   late final ShowSnackBarCallback showSnackBar;
 
   final TextEditingController _textEditingController = TextEditingController();
+  int? _selectedStoryPoint; // Add this variable for storing selected story point
+  String? _selectedPriority; // Add this variable for storing selected priority
+
 
   @override
   void initState() {
@@ -81,28 +84,37 @@ class _IssuePageBodyState extends State<IssuePageBody> {
 
 
 
-  Future<void> _addIssue(List<Issue> issueList) async {
-    final issueType = widget.currentIssueType;
-    final newIssue = _textEditingController.text;
-    if (newIssue.isNotEmpty) {
-      final issue = Issue(
-        id: DateTime.now().microsecondsSinceEpoch,
-        title: newIssue,
-        issueType: issueType,
-        isCompleted: false,
-        dateTime: DateTime.now(),
-        description: '',
-        section: _sections[_currentSectionIndex],
-      );
+Future<void> _addIssue(List<Issue> issueList) async {
+  final issueType = widget.currentIssueType;
+  final newIssue = _textEditingController.text;
+  
+  if (newIssue.isNotEmpty) {
+    final storyPoint = _selectedStoryPoint;
+    final priority = _selectedPriority; 
+    
+    final issue = Issue(
+      id: DateTime.now().microsecondsSinceEpoch,
+      title: newIssue,
+      issueType: issueType,
+      isCompleted: false,
+      dateTime: DateTime.now(),
+      description: '',
+      section: _sections[_currentSectionIndex],
+      storyPoint: storyPoint,
+      priority: priority,
+    );
 
-      await IssueDatabase.instance.insertIssue(issue);
+    await IssueDatabase.instance.insertIssue(issue);
 
-      setState(() {
-        issueList.add(issue);
-        _textEditingController.clear();
-      });
-    }
+    setState(() {
+      issueList.add(issue);
+      _textEditingController.clear();
+      _selectedStoryPoint = null; // Reset selected story point
+      _selectedPriority = null; // Reset selected priority
+    });
   }
+}
+
 
   Future<void> _removeIssue(List<Issue> issueList, int index) async {
     final issue = issueList[index];
