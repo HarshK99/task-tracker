@@ -9,10 +9,14 @@ class IssueInputField extends StatefulWidget {
     Key? key,
     required this.textEditingController,
     required this.addIssue,
+    required this.onStoryPointChanged, // Add this line
+    required this.onPriorityChanged,   // Add this line
   }) : super(key: key);
 
   final TextEditingController textEditingController;
   final void Function() addIssue;
+  final void Function(int?) onStoryPointChanged; // Add this line
+  final void Function(String?) onPriorityChanged; // Add this line
 
   @override
   _IssueInputFieldState createState() => _IssueInputFieldState();
@@ -58,8 +62,12 @@ class _IssueInputFieldState extends State<IssueInputField> {
           ),
         ),
         if (_isAdditionalFieldsVisible)
-          AdditionalInputFields(),
+          AdditionalInputFields(
+            onStoryPointChanged: widget.onStoryPointChanged, // Pass the callback
+            onPriorityChanged: widget.onPriorityChanged,     // Pass the callback
+          ),
       ],
     );
   }
 }
+

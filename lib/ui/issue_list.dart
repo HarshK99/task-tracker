@@ -49,20 +49,31 @@ class IssueList extends StatelessWidget {
                 _showMovedToTodaySnackBar(context, issue);
               },
               child: Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
                 margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                 child: ListTile(
                   tileColor: issue.isCompleted ? Colors.grey[200] : null,
                   leading: Checkbox(
                     value: issue.isCompleted,
-                    onChanged: (value) =>
-                        toggleIssueCompletion(currentIssues, currentIssues.length - 1 - index),
+                    onChanged: (value) => toggleIssueCompletion(
+                        currentIssues, currentIssues.length - 1 - index),
                   ),
-                  title: Text(
-                    issue.title,
-                    style: TextStyle(
-                      decoration: issue.isCompleted ? TextDecoration.lineThrough : null,
-                    ),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        issue.title,
+                        style: TextStyle(
+                          decoration: issue.isCompleted
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
+                      ),
+                      issue.storyPoint != null
+          ? Text('${issue.storyPoint}')
+          : SizedBox.shrink(),
+                    ],
                   ),
                 ),
               ),

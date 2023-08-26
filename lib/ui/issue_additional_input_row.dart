@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 class AdditionalInputFields extends StatelessWidget {
   const AdditionalInputFields({
     Key? key,
+    required this.onStoryPointChanged,
+    required this.onPriorityChanged,
   }) : super(key: key);
+
+  final void Function(int?) onStoryPointChanged;
+  final void Function(String?) onPriorityChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +17,7 @@ class AdditionalInputFields extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: DropdownButtonFormField<String>(
+            child: DropdownButtonFormField<int>(
               decoration: InputDecoration(
                 labelText: 'Story Point',
                 border: OutlineInputBorder(
@@ -20,14 +25,12 @@ class AdditionalInputFields extends StatelessWidget {
                 ),
               ),
               items: ['1', '2', '3', '5', '8'].map((point) {
-                return DropdownMenuItem<String>(
-                  value: point,
+                return DropdownMenuItem<int>(
+                  value: int.parse(point),
                   child: Text(point),
                 );
               }).toList(),
-              onChanged: (selectedPoint) {
-                // Handle the selected story point
-              },
+              onChanged: onStoryPointChanged, // Call the callback
             ),
           ),
           SizedBox(width: 16),
@@ -45,9 +48,7 @@ class AdditionalInputFields extends StatelessWidget {
                   child: Text(priority),
                 );
               }).toList(),
-              onChanged: (selectedPriority) {
-                // Handle the selected priority
-              },
+              onChanged: onPriorityChanged, // Call the callback
             ),
           ),
         ],

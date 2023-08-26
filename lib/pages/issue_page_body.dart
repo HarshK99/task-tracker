@@ -32,13 +32,12 @@ class _IssuePageBodyState extends State<IssuePageBody> {
   int? _selectedStoryPoint;
   String? _selectedPriority;
 
-
   @override
   void initState() {
     super.initState();
     loadSections();
-      loadIssueData();
-    }
+    loadIssueData();
+  }
   // }
 
   // @override
@@ -71,54 +70,53 @@ class _IssuePageBodyState extends State<IssuePageBody> {
     // Load issues based on the current subsection
     if (section == 'All') {
       final issues = await IssueDatabase.instance.loadAllIssues(issueType);
-    setState(() {
-      _issues = issues;
-    });
-    } else {
-      final issues =
-      await IssueDatabase.instance.loadIssuesBySections(issueType, section);
       setState(() {
         _issues = issues;
       });
-  }}
-
-
-
-Future<void> _addIssue(List<Issue> issueList) async {
-  final issueType = widget.currentIssueType;
-  final newIssue = _textEditingController.text;
-  
-  if (newIssue.isNotEmpty) {
-    final storyPoint = _selectedStoryPoint;
-    final priority = _selectedPriority; 
-    
-    final issue = Issue(
-      id: DateTime.now().microsecondsSinceEpoch,
-      title: newIssue,
-      issueType: issueType,
-      isCompleted: false,
-      dateTime: DateTime.now(),
-      description: '',
-      section: _sections[_currentSectionIndex],
-      storyPoint: storyPoint,
-      priority: priority,
-    );
-
-    await IssueDatabase.instance.insertIssue(issue);
-
-    setState(() {
-      issueList.add(issue);
-      _textEditingController.clear();
-      _selectedStoryPoint = null;
-      _selectedPriority = null;
-    });
+    } else {
+      final issues =
+          await IssueDatabase.instance.loadIssuesBySections(issueType, section);
+      setState(() {
+        _issues = issues;
+      });
+    }
   }
-}
 
+  Future<void> _addIssue(List<Issue> issueList) async {
+    final issueType = widget.currentIssueType;
+    final newIssue = _textEditingController.text;
+
+    if (newIssue.isNotEmpty) {
+      final storyPoint = _selectedStoryPoint;
+      final priority = _selectedPriority;
+
+      final issue = Issue(
+        id: DateTime.now().microsecondsSinceEpoch,
+        title: newIssue,
+        issueType: issueType,
+        isCompleted: false,
+        dateTime: DateTime.now(),
+        description: '',
+        section: _sections[_currentSectionIndex],
+        storyPoint: storyPoint,
+        priority: priority,
+      );
+
+      await IssueDatabase.instance.insertIssue(issue);
+
+      setState(() {
+        issueList.add(issue);
+        _textEditingController.clear();
+        _selectedStoryPoint = null;
+        _selectedPriority = null;
+      });
+    }
+  }
 
   Future<void> _removeIssue(List<Issue> issueList, int index) async {
     final issue = issueList[index];
-    final hasChildIssues = await IssueDatabase.instance.hasChildIssues(issue.id);
+    final hasChildIssues =
+        await IssueDatabase.instance.hasChildIssues(issue.id);
 
     if (hasChildIssues) {
       if (context.mounted) {
@@ -129,12 +127,12 @@ Future<void> _addIssue(List<Issue> issueList) async {
         );
       }
     } else {
-        await IssueDatabase.instance.deleteIssue(issue);
-      }
+      await IssueDatabase.instance.deleteIssue(issue);
+    }
 
-      setState(() {
-        issueList.removeAt(index);
-      });
+    setState(() {
+      issueList.removeAt(index);
+    });
   }
 
   Future<void> _toggleIssueCompletion(List<Issue> issueList, int index) async {
@@ -169,10 +167,9 @@ Future<void> _addIssue(List<Issue> issueList) async {
   void _switchSection(int index) {
     setState(() {
       _currentSectionIndex = index;
-        loadIssueData();
+      loadIssueData();
     });
   }
-
 
   Future<void> _navigateToIssueChild(BuildContext context, Issue issue) async {
     await Navigator.of(context).push(
@@ -215,6 +212,8 @@ Future<void> _addIssue(List<Issue> issueList) async {
         IssueInputField(
           textEditingController: _textEditingController,
           addIssue: () => _addIssue(currentIssues),
+          onStoryPointChanged: (selectedPoint) =>               _selectedStoryPoint = selectedPoint,
+          onPriorityChanged: (selectedPriority) =>              _selectedPriority = selectedPriority,
         ),
       ],
     );

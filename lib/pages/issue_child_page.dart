@@ -17,6 +17,8 @@ class IssueChildPage extends StatefulWidget {
 class _IssueChildPageState extends State<IssueChildPage> {
   List<Issue> _childIssues = [];
   final TextEditingController _textEditingController = TextEditingController();
+  int? _selectedStoryPoint;
+  String? _selectedPriority;
 
 
   @override
@@ -42,9 +44,14 @@ class _IssueChildPageState extends State<IssueChildPage> {
     });
   }
 
+
+
   Future<void> _addChildIssue() async {
     final newIssue = _textEditingController.text;
     if (newIssue.isNotEmpty) {
+      final storyPoint = _selectedStoryPoint;
+      final priority = _selectedPriority;
+
       final childIssue = Issue(
         id: DateTime.now().microsecondsSinceEpoch,
         title: newIssue,
@@ -52,6 +59,8 @@ class _IssueChildPageState extends State<IssueChildPage> {
         dateTime: DateTime.now(),
         description: '',
         projectId: widget.parentIssue.id,
+        storyPoint: storyPoint,
+        priority: priority,
       );
 
       await IssueDatabase.instance.insertIssue(childIssue);
@@ -59,6 +68,8 @@ class _IssueChildPageState extends State<IssueChildPage> {
       setState(() {
         _childIssues.add(childIssue);
         _textEditingController.clear();
+        _selectedStoryPoint = null;
+        _selectedPriority = null;
       });
     }
   }
@@ -121,7 +132,9 @@ class _IssueChildPageState extends State<IssueChildPage> {
           IssueInputField(
             textEditingController: _textEditingController,
             addIssue: _addChildIssue,
-          ),
+            onStoryPointChanged: (selectedPoint) =>               _selectedStoryPoint = selectedPoint,
+          onPriorityChanged: (selectedPriority) =>              _selectedPriority = selectedPriority,
+        ),
         ],
       ),
     );
