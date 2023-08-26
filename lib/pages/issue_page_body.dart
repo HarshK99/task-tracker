@@ -29,8 +29,8 @@ class _IssuePageBodyState extends State<IssuePageBody> {
   late final ShowSnackBarCallback showSnackBar;
 
   final TextEditingController _textEditingController = TextEditingController();
-  int? _selectedStoryPoint; // Add this variable for storing selected story point
-  String? _selectedPriority; // Add this variable for storing selected priority
+  int? _selectedStoryPoint;
+  String? _selectedPriority;
 
 
   @override
@@ -109,8 +109,8 @@ Future<void> _addIssue(List<Issue> issueList) async {
     setState(() {
       issueList.add(issue);
       _textEditingController.clear();
-      _selectedStoryPoint = null; // Reset selected story point
-      _selectedPriority = null; // Reset selected priority
+      _selectedStoryPoint = null;
+      _selectedPriority = null;
     });
   }
 }

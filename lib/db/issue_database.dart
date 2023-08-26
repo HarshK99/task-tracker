@@ -66,7 +66,7 @@ class IssueDatabase {
       onUpgrade: (db, oldVersion, newVersion) async {
     if (oldVersion < 2) {
       // Perform updates for version 2
-      await db.execute('ALTER TABLE $issueTable ADD COLUMN priority TEXT');
+      // await db.execute('ALTER TABLE $issueTable ADD COLUMN priority TEXT');
     }
   },
     );
