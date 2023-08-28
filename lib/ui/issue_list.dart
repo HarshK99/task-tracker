@@ -62,17 +62,20 @@ class IssueList extends StatelessWidget {
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      Expanded(
+                        child:Text(
                         issue.title,
                         style: TextStyle(
                           decoration: issue.isCompleted
                               ? TextDecoration.lineThrough
                               : null,
-                        ),
+                        ),),
+                        
                       ),
+                      SizedBox(width:5),
                       issue.storyPoint != null
-          ? Text('${issue.storyPoint}')
-          : SizedBox.shrink(),
+                          ? Text('${issue.storyPoint}')
+                          : SizedBox.shrink(),
                     ],
                   ),
                 ),
