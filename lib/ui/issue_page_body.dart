@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:task_tracker/pages/project_task_page.dart';
 import '../model/issue.dart';
-import '../ui/issue_list.dart';
-import '../ui/issue_input_field.dart';
-import '../ui/section_row.dart';
+import 'issue_list.dart';
+import 'issue_input_field.dart';
+import 'section_row.dart';
 import '../db/issue_database.dart';
-import 'issue_child_page.dart';
-import 'issue_details_page.dart';
+import '../pages/issue_child_page.dart';
+import '../pages/issue_details_page.dart';
 
 typedef ShowSnackBarCallback = void Function(String message);
 
@@ -199,6 +200,12 @@ class _IssuePageBodyState extends State<IssuePageBody> {
       MaterialPageRoute(builder: (_) => IssueDetailsPage(issue: issue)),
     );
   }
+  Future<void> _navigateToProjectTasks(
+      BuildContext context, Issue issue) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ProjectTasksPage(parentIssue: issue,issue: issue)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +225,7 @@ class _IssuePageBodyState extends State<IssuePageBody> {
           removeIssue: _removeIssue,
           viewIssueDetails: (issue) {
             if (widget.currentIssueType == 1) {
-              _navigateToIssueChild(context, issue);
+              _navigateToProjectTasks(context, issue);
             } else {
               _navigateToIssueDetails(context, issue);
             }

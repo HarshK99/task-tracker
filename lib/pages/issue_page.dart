@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'issue_page_body.dart';
+import '../ui/issue_page_body.dart';
 
 class IssuePage extends StatelessWidget {
   const IssuePage({Key? key}) : super(key: key);
