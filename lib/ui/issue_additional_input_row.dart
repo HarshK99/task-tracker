@@ -12,43 +12,68 @@ class AdditionalInputFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: Theme.of(context).dividerColor),
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
         children: [
           Expanded(
-            child: DropdownButtonFormField<int>(
-              decoration: InputDecoration(
-                labelText: 'Story Point',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+            child: DropdownButton<int>(
+              isExpanded: true,
+              value: 1, // Set the selected value
+              icon: Icon(Icons.arrow_drop_down),
+              iconDisabledColor: Colors.black,
+              underline: Container(),
+              onChanged: (value) {
+                // Call the function to update the selected story point
+                onStoryPointChanged(value);
+              },
               items: ['1', '2', '3', '5', '8'].map((point) {
                 return DropdownMenuItem<int>(
                   value: int.parse(point),
-                  child: Text(point),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      point,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
                 );
               }).toList(),
-              onChanged: onStoryPointChanged, // Call the callback
+              style: TextStyle(color: Colors.black),
+              itemHeight: null,
             ),
           ),
           SizedBox(width: 16),
           Expanded(
-            child: DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                labelText: 'Priority',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: 'High', // Set the selected value
+              icon: Icon(Icons.arrow_drop_down),
+              iconDisabledColor: Colors.black,
+              underline: Container(),
+              onChanged: (value) {
+                // Call the function to update the selected priority
+                onPriorityChanged(value);
+              },
               items: ['Very High', 'High', 'Low'].map((priority) {
                 return DropdownMenuItem<String>(
                   value: priority,
-                  child: Text(priority),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      priority,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
                 );
               }).toList(),
-              onChanged: onPriorityChanged, // Call the callback
+              style: TextStyle(color: Colors.black),
+              itemHeight: null,
             ),
           ),
         ],

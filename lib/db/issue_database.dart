@@ -119,12 +119,12 @@ class IssueDatabase {
     return List.generate(maps.length, (index) => Issue.fromMap(maps[index]));
   }
 
-  Future<List<Issue>> loadChildIssues(int parentId) async {
+  Future<List<Issue>> loadChildIssues(int projectId) async {
     await _initDatabase();
     final List<Map<String, dynamic>> maps = await _database!.query(
       issueTable,
-      where: 'parentId = ?',
-      whereArgs: [parentId],
+      where: 'projectId = ?',
+      whereArgs: [projectId],
     );
     return List.generate(maps.length, (index) => Issue.fromMap(maps[index]));
   }

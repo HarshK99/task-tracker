@@ -5,6 +5,7 @@ import '../ui/issue_input_field.dart';
 import '../ui/section_row.dart';
 import '../db/issue_database.dart';
 import 'issue_child_page.dart';
+import 'issue_details_page.dart';
 
 typedef ShowSnackBarCallback = void Function(String message);
 
@@ -192,6 +193,13 @@ class _IssuePageBodyState extends State<IssuePageBody> {
     );
   }
 
+  Future<void> _navigateToIssueDetails(
+      BuildContext context, Issue issue) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => IssueDetailsPage(issue: issue)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Issue> currentIssues = _issues;
@@ -205,15 +213,24 @@ class _IssuePageBodyState extends State<IssuePageBody> {
           switchSection: _switchSection,
         ),
         IssueList(
-            currentIssues: currentIssues,
-            toggleIssueCompletion: _toggleIssueCompletion,
-            removeIssue: _removeIssue,
-            viewIssueDetails: (issue) => _navigateToIssueChild(context, issue)),
+          currentIssues: currentIssues,
+          toggleIssueCompletion: _toggleIssueCompletion,
+          removeIssue: _removeIssue,
+          viewIssueDetails: (issue) {
+            if (widget.currentIssueType == 1) {
+              _navigateToIssueChild(context, issue);
+            } else {
+              _navigateToIssueDetails(context, issue);
+            }
+          },
+        ),
         IssueInputField(
           textEditingController: _textEditingController,
           addIssue: () => _addIssue(currentIssues),
-          onStoryPointChanged: (selectedPoint) =>               _selectedStoryPoint = selectedPoint,
-          onPriorityChanged: (selectedPriority) =>              _selectedPriority = selectedPriority,
+          onStoryPointChanged: (selectedPoint) =>
+              _selectedStoryPoint = selectedPoint,
+          onPriorityChanged: (selectedPriority) =>
+              _selectedPriority = selectedPriority,
         ),
       ],
     );
