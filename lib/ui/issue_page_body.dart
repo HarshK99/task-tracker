@@ -37,21 +37,10 @@ class _IssuePageBodyState extends State<IssuePageBody> {
   @override
   void initState() {
     super.initState();
-    loadSections();
-    loadIssueData();
+    loadSections().then((_){loadIssueData();});
+    
   }
-  // }
 
-  // @override
-  // void didUpdateWidget(IssuePageBody oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   if (oldWidget.getParentSection != widget.getParentSection) {
-  //     _currentSectionIndex = 0;
-  //     // loadSections().then((_) {
-  //       loadIssueData();
-  //     // });
-  //   }
-  // }
 
   Future<void> loadSections() async {
     final sections = await IssueDatabase.instance.loadSections();
