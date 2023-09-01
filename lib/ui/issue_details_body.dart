@@ -17,13 +17,21 @@ class _IssueDetailsBodyState extends State<IssueDetailsBody> {
   late TextEditingController _descriptionController;
   late TextEditingController _storyPointController;
   late TextEditingController _priorityController;
+  List<Issue> _projects = [];
+  Issue? _selectedProject;
 
   @override
   void initState() {
     super.initState();
-    _descriptionController = TextEditingController(text: widget.issue.description);
-    _storyPointController = TextEditingController(text: widget.issue.storyPoint.toString());
+    _descriptionController =
+        TextEditingController(text: widget.issue.description);
+    _storyPointController = TextEditingController(
+  text: widget.issue.storyPoint != null
+      ? widget.issue.storyPoint.toString()
+      : '',
+);
     _priorityController = TextEditingController(text: widget.issue.priority);
+    _loadProjects(widget.issue.section!);
   }
 
   @override
@@ -50,18 +58,35 @@ class _IssueDetailsBodyState extends State<IssueDetailsBody> {
 
   void _saveChanges() async {
     final updatedDescription = _descriptionController.text;
-    final updatedStoryPoint = int.parse(_storyPointController.text);
+    int? updatedStoryPoint; // Initialize as null
+
+  // Check if the text is not empty, and then try parsing
+  if (_storyPointController.text.isNotEmpty) {
+    updatedStoryPoint = int.tryParse(_storyPointController.text);
+  }
+    // final updatedStoryPoint = int.parse(_storyPointController.text!);
     final updatedPriority = _priorityController.text;
+    final updatedProjectId = _selectedProject?.id;
+    // print(updatedProjectId);
 
     widget.issue.description = updatedDescription;
     widget.issue.storyPoint = updatedStoryPoint;
     widget.issue.priority = updatedPriority;
+    widget.issue.projectId = updatedProjectId;
 
     await updateIssue(widget.issue);
 
     _descriptionController.clear();
     _storyPointController.clear();
     _priorityController.clear();
+  }
+
+  Future<void> _loadProjects(String section) async {
+    final projects =
+        await IssueDatabase.instance.loadIssuesBySections(1, section);
+    setState(() {
+      _projects = projects;
+    });
   }
 
   @override
@@ -81,18 +106,18 @@ class _IssueDetailsBodyState extends State<IssueDetailsBody> {
               Expanded(
                 child: _isEditing
                     ? TextField(
-                  controller: _descriptionController,
-                  maxLines: null,
-                  style: const TextStyle(fontSize: 16),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Enter a description',
-                  ),
-                )
+                        controller: _descriptionController,
+                        maxLines: null,
+                        style: const TextStyle(fontSize: 16),
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Enter a description',
+                        ),
+                      )
                     : Text(
-                  widget.issue.description,
-                  style: const TextStyle(fontSize: 16),
-                ),
+                        widget.issue.description,
+                        style: const TextStyle(fontSize: 16),
+                      ),
               ),
               const SizedBox(width: 8),
               IconButton(
@@ -106,7 +131,22 @@ class _IssueDetailsBodyState extends State<IssueDetailsBody> {
           ),
           if (_isEditing)
             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                DropdownButton<Issue>(
+                  value: _selectedProject,
+                  onChanged: (Issue? newValue) {
+                    setState(() {
+                      _selectedProject = newValue;
+                    });
+                  },
+                  items: _projects.map<DropdownMenuItem<Issue>>((Issue value) {
+                    return DropdownMenuItem<Issue>(
+                      value: value,
+                      child: Text(value.title),
+                    );
+                  }).toList(),
+                ),
                 TextFormField(
                   controller: _storyPointController,
                   keyboardType: TextInputType.number,
